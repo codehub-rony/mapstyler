@@ -1,7 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
 
-import EditorPage from "@/Pages/EditorPage.vue";
+import EditorPage from "@/pages/EditorPage.vue";
 import LandingPage from "@/pages/LandingPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import ProjectsPage from "@/pages/ProjectsPage.vue";
