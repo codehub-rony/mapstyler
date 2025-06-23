@@ -3,7 +3,7 @@
     <div>
       <v-img
         src="@/assets/logo.svg"
-        width="50px"
+        width="40px"
         class="pa-2 ml-2 app-bar-logo"
         @click="refresh"
       />
