@@ -8,19 +8,8 @@
         @click="refresh"
       />
       <div class="toolbar-title">MapStyler</div>
-      <v-btn
-        color="black"
-        size="small"
-        href="https://www.oneprojectatatime.nl/tag/mapstyler/"
-        target="_blank"
-        variant="text"
-        rel="noopener"
-        class="ml-5 mt-1"
-        v-if="!isAuthenticated()"
-        >blog</v-btn
-      >
 
-      <div v-else class="ml-4 d-flex flex-row">
+      <div v-if="isAuthenticated()" class="ml-4 d-flex flex-row">
         <v-btn
           color="black"
           size="small"
@@ -49,6 +38,18 @@
         href="https://github.com/codehub-rony/map-styler"
         target="_blank"
       ></v-btn>
+      <v-btn
+        color="black"
+        size="small"
+        href="https://www.oneprojectatatime.nl/tag/mapstyler/"
+        target="_blank"
+        variant="text"
+        rel="noopener"
+        class="mr-2 mt-1"
+        rounded="0"
+        v-if="!isAuthenticated()"
+        >blog</v-btn
+      >
       <!-- <v-btn
         color="#FFDD00"
         size="small"
@@ -60,10 +61,11 @@
       > -->
       <v-btn
         v-if="!isAuthenticated()"
-        variant="flat"
+        variant="text"
         rounded="0"
-        color="primary"
-        class="mr-4"
+        color="black"
+        class="mr-4 mt-1"
+        size="small"
         flat
         @click="$router.push({ name: 'login' })"
         >login</v-btn
