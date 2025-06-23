@@ -32,7 +32,7 @@
       <v-btn
         v-if="!isAuthenticated()"
         icon="mdi-github"
-        href="https://github.com/codehub-rony/map-styler"
+        href="https://github.com/codehub-rony/mapstyler"
         target="_blank"
       ></v-btn>
       <v-btn
@@ -47,15 +47,7 @@
         v-if="!isAuthenticated()"
         >blog</v-btn
       >
-      <!-- <v-btn
-        color="#FFDD00"
-        size="small"
-        variant="flat"
-        href="https://www.buymeacoffee.com/RonyNedkov"
-        target="_blank"
-        class="mr-4"
-        ><span> &#9749; </span>Buy me a coffee</v-btn
-      > -->
+
       <v-btn
         v-if="!isAuthenticated()"
         variant="text"

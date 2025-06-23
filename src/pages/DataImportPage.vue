@@ -48,12 +48,30 @@
             <v-divider></v-divider>
             <v-img
               height="600"
-              class="mt-7"
+              class="mt-7 mb-3"
               elevation="2"
               src="@/assets/landing_page.png"
             />
             <v-divider></v-divider> </v-col
         ></v-row>
+        <v-row v-if="!customData">
+          <v-col>
+            <div class="d-flex flex-column align-center justify-center mb-6">
+              <div class="text-subtitle-1 font-weight-medium">
+                Sponsor the project
+              </div>
+              <v-btn
+                color="#FFDD00"
+                size="small"
+                variant="flat"
+                href="https://www.buymeacoffee.com/RonyNedkov"
+                target="_blank"
+                class="mt-3"
+                ><span> &#9749; </span>Buy me a coffee</v-btn
+              >
+            </div>
+          </v-col></v-row
+        >
       </v-container>
     </v-sheet>
   </div>
