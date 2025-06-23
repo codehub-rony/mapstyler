@@ -1,13 +1,10 @@
 <template>
   <v-app-bar flat elevation="1">
     <div class="d-flex flex-row align-center">
-      <v-img
-        :src="logo"
-        width="40px"
-        class="pa-2 ml-2 app-bar-logo"
-        @click="refresh"
-      />
-      <div class="toolbar-title">MapStyler</div>
+      <div class="d-flex flex-row align-center app-bar-logo" @click="refresh">
+        <v-img :src="logo" width="40px" class="pa-2 ml-2" />
+        <div class="toolbar-title">MapStyler</div>
+      </div>
 
       <div v-if="isAuthenticated()" class="ml-4 d-flex flex-row">
         <v-btn
