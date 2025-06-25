@@ -14,11 +14,6 @@ import * as olExtent from "ol/extent";
 // Components
 import MapPopup from "@/components/MapPopup.vue";
 
-// basemap
-import OSM from "ol/source/OSM.js";
-import TileLayer from "ol/layer/Tile.js";
-import TileJSON from "ol/source/TileJSON";
-
 // Styling
 import { stylefunction } from "ol-mapbox-style";
 
@@ -26,6 +21,9 @@ import { stylefunction } from "ol-mapbox-style";
 import VectorTileLayer from "ol/layer/VectorTile.js";
 import OGCVectorTile from "ol/source/OGCVectorTile.js";
 import { GeoJSON, MVT } from "ol/format.js";
+
+//utils
+import utils from "@/utils/map_utils";
 
 // Goejson
 import { Vector as VectorLayer } from "ol/layer.js";
@@ -88,16 +86,12 @@ export default {
         view: this.view,
         controls: [],
       });
-      let maptiler_key = import.meta.env.VITE_MAPTILER_KEY;
-      let background = new TileLayer({
-        source: new TileJSON({
-          url: `https://api.maptiler.com/maps/dataviz/tiles.json?key=${maptiler_key}`,
-          tileSize: 512,
-          crossOrigin: "anonymous",
-        }),
-      });
 
-      this.map.addLayer(background);
+      let maptiler_key = import.meta.env.VITE_MAPTILER_KEY;
+
+      let basemap = utils.initBaseMap(maptiler_key);
+
+      this.map.addLayer(basemap);
     },
     createOGCVectorLayer: function (styleObject) {
       let layer = new VectorTileLayer({
