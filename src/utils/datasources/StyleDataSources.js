@@ -23,9 +23,9 @@ class TiledVectorSource extends StyleDataSources {
 }
 
 class GeoJsonSource extends StyleDataSources {
-  constructor(source_id) {
+  constructor(source_id, geojson) {
     super(source_id, "geojson");
-    this._data = "./data.geojson";
+    this._data = geojson ? geojson : "./data.geojson";
   }
   getSourceAsObject() {
     let styleObject = {};

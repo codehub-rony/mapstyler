@@ -41,6 +41,25 @@ class StyleJSON {
     return this._sources;
   }
 
+  getSourceById(source_id) {
+    if (this._sources.hasOwnProperty(source_id)) {
+      return this._sources[id];
+    } else {
+      return null;
+    }
+  }
+
+  //Temporay as currently only one source is supported.
+  getFirstSource() {
+    const keys = Object.keys(this._sources);
+
+    if (keys.length > 0) {
+      return this._sources[keys[0]];
+    } else {
+      return null;
+    }
+  }
+
   get layers() {
     return this._layers;
   }

@@ -33,9 +33,6 @@
         class="add-filter-input-select"
         id="filter-input-type"
         v-model="attributeValue"
-        :placeholder="
-          update.attribute ? attributes[update.attribute].toLowerCase() : null
-        "
       />
     </div>
   </div>

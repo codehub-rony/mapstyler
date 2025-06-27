@@ -123,7 +123,10 @@ export default {
           let geojson_layer = new VectorLayer({
             source: new VectorSource(),
           });
-          let features = new GeoJSON().readFeatures(styleObject.geojson, {
+
+          let geojson_data = styleObject.stylejson.getFirstSource().data;
+
+          let features = new GeoJSON().readFeatures(geojson_data, {
             featureProjection: "EPSG:3857",
           });
 
