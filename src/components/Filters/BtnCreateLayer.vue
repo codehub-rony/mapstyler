@@ -1,13 +1,11 @@
 <template>
   <div>
-    <div>
-      <v-btn block variant="text" size="x-small" @click="openDialog"
-        ><span class="text-caption">create filter</span>
-      </v-btn>
-    </div>
-
-    <LayerEditDialog ref="LayerEditDialog" @add-layer="addLayer" />
+    <v-btn block variant="text" size="x-small" @click="openDialog" rounded="0"
+      ><span class="text-caption">create new layer</span>
+    </v-btn>
   </div>
+
+  <LayerEditDialog ref="LayerEditDialog" @add-layer="addLayer" />
 </template>
 
 <script>
