@@ -28,18 +28,13 @@ class GeoJSONFeatures extends BaseDataSource {
       geojson.features[0].geometry.type.toLowerCase()
     );
     this._source_id = stylename;
-    this._geojson = geojson;
 
-    let source = new GeoJsonSource(this._source_id);
+    let source = new GeoJsonSource(this._source_id, geojson);
     this._stylejson = new StyleJSON(stylename, source, this._geometry_type);
   }
 
   #initializeWithConfig(source_config) {
     console.log("not implemented yet");
-  }
-
-  get geojson() {
-    return this._geojson;
   }
 
   fetchFields() {
