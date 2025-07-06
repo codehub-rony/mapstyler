@@ -23,6 +23,7 @@ class OGCVectorTiles extends BaseDataSource {
       tilejson.vector_layers[0].geometry_type
     );
     this._tilejson_url = tilejson_url;
+    this._tilematrixset_url = tilejson_url.replace("?f=tilejson", "");
     this._source_id = tilejson.vector_layers[0].id;
     this._fields = tilejson.vector_layers[0].fields;
 
@@ -38,6 +39,7 @@ class OGCVectorTiles extends BaseDataSource {
       "source_id",
       "geometry_type",
       "tilejson_url",
+      "tilematrixset_url",
       "stylejson",
     ];
 
@@ -54,6 +56,7 @@ class OGCVectorTiles extends BaseDataSource {
     this._projection = stylejson.projection;
     this._geometry_type = stylejson.geometry_type;
     this._tilejson_url = stylejson.tilejson_url;
+    this._tilematrixset_url = stylejson.tilematrixset_url;
     this._stylejson = new StyleJSON(
       stylejson.name,
       null,
@@ -66,6 +69,10 @@ class OGCVectorTiles extends BaseDataSource {
 
   get tilejson_url() {
     return this._tilejson_url;
+  }
+
+  get tilematrixset_url() {
+    return this._tilematrixset_url;
   }
 
   async fetchFields() {

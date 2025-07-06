@@ -96,7 +96,7 @@ export default {
     createOGCVectorLayer: function (styleObject) {
       let layer = new VectorTileLayer({
         source: new OGCVectorTile({
-          url: styleObject.tilejson_url,
+          url: styleObject.tilematrixset_url,
           format: new MVT(),
           projection: "EPSG:3857",
         }),
