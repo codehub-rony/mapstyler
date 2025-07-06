@@ -2,8 +2,10 @@
   <div>
     <div>
       <span
-        >OGC Vectortile URL
-        <v-tooltip text="Click for more information on github">
+        >OGC Vectortile TileJSON URL
+        <v-tooltip
+          text="We currently only support WebMercator. Click for more information on github"
+        >
           <template v-slot:activator="{ props }">
             <v-btn
               v-bind="props"
@@ -76,10 +78,11 @@ export default {
         "_blank"
       );
     },
-    validateUrl: function (url) {
+    validateUrl: function () {
       this.errorMessages = [];
       this.showToggle = false;
-      fetch(`${url}?f=tilejson`, {
+
+      fetch(this.url, {
         headers: {
           "Content-Type": "application/json",
         },
