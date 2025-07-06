@@ -10,6 +10,7 @@ import Map from "ol/Map.js";
 import View from "ol/View.js";
 import { unByKey } from "ol/Observable.js";
 import * as olExtent from "ol/extent";
+import { defaults as defaultControls, Zoom } from "ol/control";
 
 // Components
 import MapPopup from "@/components/MapPopup.vue";
@@ -84,7 +85,7 @@ export default {
         layers: [],
         target: "map_container",
         view: this.view,
-        controls: [],
+        controls: defaultControls({ zoom: false }),
       });
 
       let maptiler_key = import.meta.env.VITE_MAPTILER_KEY;
