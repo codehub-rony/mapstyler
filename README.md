@@ -25,3 +25,8 @@ The tool is in development and many more features are to come:
 Suggestions and ideas for futher development are welcome.
 
 https://github.com/codehub-rony/map-styler/assets/10270049/59beff25-35cd-41a6-8163-95e448548701
+
+
+#### News
+
+- 05-09-2025 - [Upcoming features: user accounts & projects](https://www.oneprojectatatime.nl/upcoming-features-user-accounts-projects/)
