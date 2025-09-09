@@ -115,7 +115,6 @@ export default {
         let project = new Project("Municipalities");
         project.addDataSource(datasource);
 
-        console.log(project);
         this.setProject(project);
         this.$router.push("/editor");
       }, 100);

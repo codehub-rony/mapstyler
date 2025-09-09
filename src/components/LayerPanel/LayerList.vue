@@ -67,8 +67,6 @@ import EditButton from "./EditButton.vue";
 import BtnCreateLayer from "@/components/Filters/BtnCreateLayer.vue";
 import LayerListControls from "@/components/LayerPanel/LayerListControls.vue";
 
-import { updatePaintProperties } from "@/utils/new_stylejson_approach/stylejson_utils";
-
 export default {
   emits: ["open-edit-dialog"],
   components: {
@@ -98,20 +96,8 @@ export default {
       this.$refs.filterDialog.openDialog(layer);
     },
     updateProperties(update) {
-      console.log("sending update", update);
       this.emitter.emit("set-paint-properties", update);
-      // this.datasource.layers.forEach((layer) => {
-      //   if (layer.id === update.layer_id) {
-      //     console.log("layer.paint before", layer.paint);
-      //     updatePaintProperties(layer.paint, update.properties);
-      //     console.log("layer.paint After", layer.paint);
-      //     // layer.updateProperties(update.properties);
-      //   }
-      // });
     },
-  },
-  mounted() {
-    console.log(this.datasource);
   },
 };
 </script>

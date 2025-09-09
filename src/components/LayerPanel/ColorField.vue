@@ -51,7 +51,6 @@ export default {
     };
   },
   mounted() {
-    console.log("=============", this.property);
     this.setColorFromProperty(this.property.value);
   },
 
@@ -84,7 +83,7 @@ export default {
     },
     handleColorSelection: function (e) {
       this.color.a = this.color.a ? Math.round(this.color.a * 100) / 100 : 1;
-      console.log(this.color);
+
       let updated_color = { layer_id: this.property.layer_id, properties: {} };
       updated_color.properties[
         this.property.property

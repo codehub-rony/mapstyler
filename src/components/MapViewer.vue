@@ -14,7 +14,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 export default {
   computed: {
-    ...mapState(useAppStore, ["styleObjects", "currentProject", "project"]),
+    ...mapState(useAppStore, ["project"]),
   },
   data() {
     return {
@@ -34,7 +34,6 @@ export default {
     });
 
     this.emitter.on("set-layout-properties", (update) => {
-      console.log("--- update", update);
       for (const [key, value] of Object.entries(update.properties)) {
         this.map.setLayoutProperty(update.layer_id, key, value);
       }
@@ -53,8 +52,6 @@ export default {
       this.map.on("load", () => {
         if (this.project.datasources.length > 0) {
           this.project.datasources.forEach((datasource) => {
-            console.log(datasource);
-
             if (datasource.type === "geojson") {
               this.addGeoJSONSource(datasource);
             }
@@ -72,18 +69,6 @@ export default {
     setHeight: function () {
       this.height =
         window.innerHeight < 950 ? window.innerHeight * 0.8 : "85vh";
-    },
-  },
-
-  watch: {
-    styleObjects: {
-      handler() {
-        // if (this.styleObjects.length > 0) {
-        //   console.log(this.styleObjects, "----------");
-        //   this.addGeoJSONSource(this.styleObjects[0]);
-        // }
-      },
-      deep: true,
     },
   },
 };
