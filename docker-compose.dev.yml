@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000" # Vite dev server
+    volumes:
+      - .:/app # Mount project files
+      - /app/node_modules # Keep node_modules in container
+    command: yarn dev --host 0.0.0.0
