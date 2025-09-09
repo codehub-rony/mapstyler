@@ -14,6 +14,8 @@
     "@fontsource/roboto": "5.2.5",
     "@mdi/font": "7.4.47",
     "axios": "^1.10.0",
+    "maplibre-gl": "^5.7.1",
+    "mitt": "^3.0.1",
     "ol": "^10.6.1",
     "ol-mapbox-style": "^13.0.1",
     "pinia": "^3.0.3",

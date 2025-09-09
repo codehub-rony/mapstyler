@@ -1,59 +1,24 @@
 <template>
   <div>
     <v-sheet :height="height" id="map_container"> </v-sheet>
-    <MapPopup :map="map" v-if="map && styleObjects.length > 0" />
   </div>
 </template>
 
 <script>
-import Map from "ol/Map.js";
-import View from "ol/View.js";
-import { unByKey } from "ol/Observable.js";
-import * as olExtent from "ol/extent";
-import { defaults as defaultControls, Zoom } from "ol/control";
-
-// Components
-import MapPopup from "@/components/MapPopup.vue";
-
-// Styling
-import { stylefunction } from "ol-mapbox-style";
-
-// OGC Tile layer
-import VectorTileLayer from "ol/layer/VectorTile.js";
-import OGCVectorTile from "ol/source/OGCVectorTile.js";
-import { GeoJSON, MVT } from "ol/format.js";
-
-//utils
-import utils from "@/utils/map_utils";
-
-// Goejson
-import { Vector as VectorLayer } from "ol/layer.js";
-import { Vector as VectorSource } from "ol/source.js";
-
-import "../../node_modules/ol/ol.css";
-
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapState, mapActions } from "pinia";
 
-import OGCVectorTiles from "@/utils/datasources/OGCVectorTiles";
-import GeoJSONFeatures from "@/utils/datasources/GeoJSONFeatures";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 export default {
-  components: {
-    MapPopup,
-  },
-  props: {
-    geodataSource: Object,
-  },
   computed: {
-    ...mapState(useAppStore, ["styleObjects", "currentProject"]),
+    ...mapState(useAppStore, ["styleObjects", "currentProject", "project"]),
   },
   data() {
     return {
-      feature_attributes: [],
       map: null,
-      view: null,
       height: null,
     };
   },
@@ -62,165 +27,61 @@ export default {
     this.setHeight();
     this.initMap();
 
-    if (this.styleObjects.length > 0) {
-      this.initVectorLayers();
-    }
-    // else {
-    //   this.$router.push("/projects");
-    // }
+    this.emitter.on("set-paint-properties", (update) => {
+      for (const [key, value] of Object.entries(update.properties)) {
+        this.map.setPaintProperty(update.layer_id, key, value);
+      }
+    });
 
-    this.map.on("click", (evt) => {
-      console.log(evt.coordinate, evt.map.getView().getZoom());
+    this.emitter.on("set-layout-properties", (update) => {
+      console.log("--- update", update);
+      for (const [key, value] of Object.entries(update.properties)) {
+        this.map.setLayoutProperty(update.layer_id, key, value);
+      }
     });
   },
   methods: {
     ...mapActions(useAppStore, ["isStyleObjectLoaded"]),
     initMap: function () {
-      this.view = new View({
-        center: [595074, 6829276],
-
+      this.map = new maplibregl.Map({
+        container: "map_container",
+        style: "https://tiles.openfreemap.org/styles/bright",
+        center: [5.204, 52.062],
         zoom: 6,
       });
-      this.map = new Map({
-        layers: [],
-        target: "map_container",
-        view: this.view,
-        controls: defaultControls({ zoom: false }),
-      });
 
-      let maptiler_key = import.meta.env.VITE_MAPTILER_KEY;
+      this.map.on("load", () => {
+        if (this.project.datasources.length > 0) {
+          this.project.datasources.forEach((datasource) => {
+            console.log(datasource);
 
-      let basemap = utils.initBaseMap(maptiler_key);
-
-      this.map.addLayer(basemap);
-    },
-    createOGCVectorLayer: function (styleObject) {
-      let layer = new VectorTileLayer({
-        source: new OGCVectorTile({
-          url: styleObject.tilematrixset_url,
-          format: new MVT(),
-          projection: "EPSG:3857",
-        }),
-      });
-
-      layer.set("source_id", styleObject.source_id);
-
-      this.map.addLayer(layer);
-
-      this.applyStyle(layer, styleObject.getStyleJSON(), styleObject.source_id);
-
-      let layer_source = layer.getSource();
-      const key = layer_source.on("change", () => {
-        if (layer_source.getState() === "ready") {
-          const extent = layer_source.getTileGrid().getExtent();
-          this.zoomToExtent(extent);
-          unByKey(key);
+            if (datasource.type === "geojson") {
+              this.addGeoJSONSource(datasource);
+            }
+          });
         }
       });
     },
-    initVectorLayers: function () {
-      this.styleObjects.forEach((styleObject) => {
-        if (styleObject instanceof GeoJSONFeatures) {
-          let geojson_layer = new VectorLayer({
-            source: new VectorSource(),
-          });
+    addGeoJSONSource(datasource) {
+      this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
 
-          let geojson_data = styleObject.stylejson.getFirstSource().data;
-
-          let features = new GeoJSON().readFeatures(geojson_data, {
-            featureProjection: "EPSG:3857",
-          });
-
-          // Setting id for SelectionInteraction
-          features.forEach((feature, i) => {
-            feature.setId(i);
-          });
-
-          this.applyStyle(
-            geojson_layer,
-            styleObject.getStyleJSON(),
-            styleObject.source_id
-          );
-
-          geojson_layer.getSource().addFeatures(features);
-          geojson_layer.set("source_id", styleObject.source_id);
-          this.map.addLayer(geojson_layer);
-          this.zoomToExtent(geojson_layer.getSource().getExtent());
-        }
-
-        if (styleObject instanceof OGCVectorTiles) {
-          this.createOGCVectorLayer(styleObject);
-        }
+      datasource.layers.forEach((layer) => {
+        this.map.addLayer(layer);
       });
     },
-
-    zoomToExtent: function (extent) {
-      if (extent) {
-        let resolution = this.view.getResolutionForExtent(extent);
-        let zoom = this.view.getZoomForResolution(resolution) - 0.3;
-        let center = olExtent.getCenter(extent);
-        this.view.animate({ zoom: zoom, center: center, duration: 1000 });
-      }
-    },
-
     setHeight: function () {
       this.height =
         window.innerHeight < 950 ? window.innerHeight * 0.8 : "85vh";
     },
-    applyStyle: function (vectorlayer, stylejson, source_id) {
-      stylefunction(vectorlayer, stylejson, source_id);
-    },
   },
+
   watch: {
     styleObjects: {
       handler() {
-        const map_layers = [...this.map.getLayers().getArray()].filter(
-          (layer) => layer.get("source_id") !== undefined
-        );
-        const style_source_ids = this.styleObjects.map((obj) => obj.source_id);
-        const map_source_ids = map_layers.map((layer) =>
-          layer.get("source_id")
-        );
-
-        // Find styleObjects that have not been added to map
-        const added = style_source_ids.filter(
-          (source_id) => !map_source_ids.includes(source_id)
-        );
-
-        // Find styleObjects that have been removed, but are still on the map
-        const removed = map_source_ids.filter(
-          (source_id) => !style_source_ids.includes(source_id)
-        );
-
-        if (added.length > 0) {
-          let object_to_add = this.styleObjects.find(
-            (style_object) => style_object.source_id === added[0]
-          );
-          this.createOGCVectorLayer(object_to_add);
-        }
-
-        if (removed.length > 0) {
-          let layer_to_remove = this.map
-            .getLayers()
-            .getArray()
-            .find((layer) => layer.get("source_id") === removed[0]);
-          this.map.removeLayer(layer_to_remove);
-        }
-
-        // update styles on update
-        if (removed.length == added.length) {
-          this.styleObjects.forEach((styleObject) => {
-            let layer_to_style = map_layers.find(
-              (layer) => layer.get("source_id") === styleObject.source_id
-            );
-
-            this.applyStyle(
-              layer_to_style,
-              styleObject.getStyleJSON(),
-              styleObject.source_id
-            );
-          });
-        }
+        // if (this.styleObjects.length > 0) {
+        //   console.log(this.styleObjects, "----------");
+        //   this.addGeoJSONSource(this.styleObjects[0]);
+        // }
       },
       deep: true,
     },

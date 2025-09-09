@@ -4,8 +4,8 @@ import _ from "lodash";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
+    project: null,
     styleObjects: [],
-    styleObject: null,
     currentProject: null,
     originalState: [],
   }),
@@ -13,6 +13,9 @@ export const useAppStore = defineStore("app", {
   actions: {
     setCurrentProject(project) {
       this.currentProject = project;
+    },
+    setProject(project) {
+      this.project = project;
     },
     setOriginalState() {
       this.originalState = [];
@@ -39,9 +42,6 @@ export const useAppStore = defineStore("app", {
     async clearProject() {
       this.currentProject = null;
       this.styleObjects = [];
-    },
-    setStyleObject(styleObject) {
-      this.styleObject = styleObject;
     },
     addStyleObject(styleObject) {
       this.styleObjects.push(styleObject);

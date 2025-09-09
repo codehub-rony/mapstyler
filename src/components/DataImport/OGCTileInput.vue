@@ -82,11 +82,7 @@ export default {
       this.errorMessages = [];
       this.showToggle = false;
 
-      fetch(this.url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      fetch(this.url)
         .then((res) => res.json())
         .then((tilejson) => {
           this.tilejson = tilejson;

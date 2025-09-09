@@ -81,7 +81,8 @@
 import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
 
-import GeoJSONFeatures from "@/utils/datasources/GeoJSONFeatures";
+import GeoJSONDataSource from "@/utils/datasources/maplibre_style_approach/DataSources";
+import Project from "@/utils/datasources/maplibre_style_approach/Project";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -99,18 +100,25 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject"]),
+    ...mapActions(useAppStore, ["setProject"]),
     loadDemoData: function () {
       this.loading = true;
       setTimeout(() => {
-        let styleObject = new GeoJSONFeatures("Municipalities", demo_data);
+        let source_id = "municipalities";
+        let datasource = new GeoJSONDataSource(
+          "Municipalities",
+          source_id,
+          demo_data
+        );
+        let geometry_type = demo_data.features[0].geometry.type.toLowerCase();
+        datasource.createDefaultLayers(geometry_type);
+        let project = new Project("Municipalities");
+        project.addDataSource(datasource);
 
-        this.handleLoadData(styleObject);
+        console.log(project);
+        this.setProject(project);
+        this.$router.push("/editor");
       }, 100);
-    },
-    handleLoadData: function (styleObject) {
-      this.addStyleObject(styleObject);
-      this.$router.push("/editor");
     },
   },
 };
