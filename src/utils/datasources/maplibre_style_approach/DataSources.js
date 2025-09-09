@@ -45,6 +45,14 @@ class BaseDataSource {
   get layers() {
     return this._layers;
   }
+
+  deleteLayer(layer_id) {
+    this._layers.forEach((layer, i) => {
+      if (layer.id === layer_id) {
+        this._layers.splice(i, 1);
+      }
+    });
+  }
 }
 
 class GeoJSONDataSource extends BaseDataSource {

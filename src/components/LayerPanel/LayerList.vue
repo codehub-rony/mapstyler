@@ -90,7 +90,8 @@ export default {
 
   methods: {
     deleteLayer: function (layer) {
-      this.styleObject.stylejson.deleteLayer(layer.getId());
+      this.datasource.deleteLayer(layer.id);
+      this.emitter.emit("remove-layer", layer.id);
     },
     handleEvent: function (layer) {
       this.$refs.filterDialog.openDialog(layer);

@@ -38,6 +38,10 @@ export default {
         this.map.setLayoutProperty(update.layer_id, key, value);
       }
     });
+
+    this.emitter.on("remove-layer", (layer_id) => {
+      if (this.map.getLayer(layer_id)) this.map.removeLayer(layer_id);
+    });
   },
   methods: {
     ...mapActions(useAppStore, ["isStyleObjectLoaded"]),
