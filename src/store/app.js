@@ -1,6 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import _ from "lodash";
+import MapService from "@/services/MapService";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -53,6 +54,43 @@ export const useAppStore = defineStore("app", {
     },
     isStyleObjectLoaded() {
       return this.styleObjects.length > 0 ? true : false;
+    },
+
+    saveProject() {
+      const map_service = new MapService();
+      let style = map_service.getStyle();
+      console.log("NEED TO IMPLEMENT: POST REQUESTS TO SAVE STYLE");
+      // this.deleteStyleJSONS();
+
+      // this.styleObjects.forEach((styleObject) => {
+      //   let payload = {
+      //     name: styleObject.name,
+      //     description: styleObject.description,
+      //     geometry_type: styleObject.geometry_type,
+      //     source_id: styleObject.source_id,
+      //     tilejson_url: styleObject.tilejson_url,
+      //     tilematrixset_url: styleObject.tilematrixset_url,
+      //     stylejson: JSON.parse(styleObject.getStyleJSON()),
+      //   };
+
+      //   if (styleObject.id) {
+      //     api.Project.saveStyleJSON(
+      //       this.currentProject.id,
+      //       styleObject.id,
+      //       payload
+      //     ).then((res) => {
+      //       this.setOriginalState();
+      //     });
+      //   } else {
+      //     let res = api.Project.createStyleJSON(
+      //       this.currentProject.id,
+      //       payload
+      //     ).then((res) => {
+      //       styleObject.id = res.id;
+      //       this.setOriginalState();
+      //     });
+      //   }
+      // });
     },
   },
 });

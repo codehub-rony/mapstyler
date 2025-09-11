@@ -72,13 +72,14 @@ import utils from "@/utils/common.js";
 import NewTileJSONDialog from "@/components/DataImport/NewTileJSONDialog.vue";
 
 // store
-
 import { useAuthStore } from "@/store/auth.js";
+import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
+
 import _ from "lodash";
 
 export default {
-  emits: ["save-project"],
+  // emits: ["save-project"],
   components: {
     DownloadBtn,
     LayerList,
@@ -95,6 +96,7 @@ export default {
 
   methods: {
     ...mapActions(useAuthStore, ["isAuthenticated"]),
+    ...mapActions(useAppStore, ["saveStyle"]),
 
     openDialogForNewSource: function () {
       this.$refs.newdatasource.openDialog();
@@ -105,7 +107,8 @@ export default {
       });
     },
     saveProject: function () {
-      this.$emit("save-project");
+      this.saveProject();
+      // this.$emit("save-project");
     },
   },
 };

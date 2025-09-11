@@ -7,10 +7,9 @@
 <script>
 // store
 import { useAppStore } from "@/store/app.js";
-import { mapState, mapActions } from "pinia";
+import { mapState } from "pinia";
 
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import MapService from "@/services/MapService";
 
 export default {
   computed: {
@@ -44,14 +43,9 @@ export default {
     });
   },
   methods: {
-    ...mapActions(useAppStore, ["isStyleObjectLoaded"]),
     initMap: function () {
-      this.map = new maplibregl.Map({
-        container: "map_container",
-        style: "https://tiles.openfreemap.org/styles/bright",
-        center: [5.204, 52.062],
-        zoom: 6,
-      });
+      const map_service = new MapService();
+      this.map = map_service.createMap("map_container");
 
       this.map.on("load", () => {
         if (this.project.datasources.length > 0) {
