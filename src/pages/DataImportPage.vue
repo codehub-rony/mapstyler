@@ -80,6 +80,7 @@
 <script>
 import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
+import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
 
 import GeoJSONDataSource from "@/utils/datasources/maplibre_style_approach/DataSources";
 import Project from "@/utils/datasources/maplibre_style_approach/Project";
@@ -104,16 +105,11 @@ export default {
     loadDemoData: function () {
       this.loading = true;
       setTimeout(() => {
-        let source_id = "municipalities";
-        let datasource = new GeoJSONDataSource(
+        const project = createProjectFromGeoJSON(
           "Municipalities",
-          source_id,
+          "municipalities",
           demo_data
         );
-        let geometry_type = demo_data.features[0].geometry.type.toLowerCase();
-        datasource.createDefaultLayers(geometry_type);
-        let project = new Project("Municipalities");
-        project.addDataSource(datasource);
 
         this.setProject(project);
         this.$router.push("/editor");
