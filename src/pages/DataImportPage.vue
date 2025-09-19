@@ -82,9 +82,6 @@ import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
 import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
 
-import GeoJSONDataSource from "@/utils/datasources/maplibre_style_approach/DataSources";
-import Project from "@/utils/datasources/maplibre_style_approach/Project";
-
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
@@ -110,6 +107,8 @@ export default {
           "municipalities",
           demo_data
         );
+
+        console.log(project);
 
         this.setProject(project);
         this.$router.push("/editor");
