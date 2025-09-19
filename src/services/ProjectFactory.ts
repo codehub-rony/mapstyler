@@ -29,11 +29,14 @@ interface GeoJSON {
 export function createProjectFromGeoJSON(
   name: string,
   source_id: string,
-  data: GeoJSON
+  geojson: GeoJSON
 ): Project {
-  const datasource = new GeoJSONDataSource(name, source_id, data);
+  if (typeof geojson === "string") {
+    geojson = JSON.parse(geojson);
+  }
+  const datasource = new GeoJSONDataSource(name, source_id, geojson);
   const geometry_type =
-    data.features[0].geometry.type.toLowerCase() as GeometryType;
+    geojson.features[0].geometry.type.toLowerCase() as GeometryType;
   datasource.createDefaultLayers(geometry_type);
 
   const project = new Project(name);

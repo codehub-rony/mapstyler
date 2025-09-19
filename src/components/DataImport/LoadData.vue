@@ -73,9 +73,9 @@ import OGCTileInput from "@/components/DataImport/OGCTileInput.vue";
 import GeoJSONInput from "@/components/DataImport/GeoJSONInput.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 
-import OGCVectorTiles from "@/utils/datasources/OGCVectorTiles";
-import GeoJSONFeatures from "@/utils/datasources/GeoJSONFeatures";
+import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
 
+// store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
 
@@ -113,33 +113,48 @@ export default {
     ];
   },
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject"]),
+    ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
     async validate() {
       this.loading = true;
       const { valid } = await this.$refs.form.validate();
 
       if (valid) {
-        let styleObject;
-
         if (this.selectedType === "geojson") {
           this.openFile().then((geojson) => {
-            styleObject = new GeoJSONFeatures(this.stylename, geojson);
-            this.loadStyleJson(styleObject);
+            const project = createProjectFromGeoJSON(
+              this.stylename,
+              this.stylename.toLowerCase(),
+              geojson
+            );
+            this.setProject(project);
+            this.$router.push("/editor");
           });
         }
 
-        if (this.selectedType === "ogc_vectortile" && this.tilejson) {
-          let styleObject = new OGCVectorTiles(
-            this.tilejson.url,
-            this.tilejson.tilejson,
-            this.stylename
-          );
+        // if (this.selectedType === "ogc_vectortile" && this.tilejson) {
+        //   let factory = new StyleJSONFactory();
 
-          this.loadStyleJson(styleObject);
-        }
+        //   factory.createVectorTileSource(
+        //     this.tilejson.tilejson.vector_layers[0].id,
+        //     this.tilejson.tilejson.tiles[0]
+        //   );
+        //   factory.createDefaultLayers("polygon", "buildings");
+        //   let stylie = factory.build();
+
+        //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
+
+        //   let styleObject = new OGCVectorTiles(
+        //     this.tilejson.url,
+        //     this.tilejson.tilejson,
+        //     this.stylename
+        //   );
+
+        //   this.loadStyleJson(newStyleObject);
+        // }
       }
     },
 
+    // function below will be absolute
     loadStyleJson: function (styleObject) {
       this.addStyleObject(styleObject);
       this.$router.push("/editor");

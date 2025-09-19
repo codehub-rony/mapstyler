@@ -108,8 +108,6 @@ export default {
           demo_data
         );
 
-        console.log(project);
-
         this.setProject(project);
         this.$router.push("/editor");
       }, 100);
