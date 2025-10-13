@@ -30,6 +30,7 @@
           v-if="selectedType"
         >
           <InputTextField
+            v-if="isGeoJsonSelected"
             v-model="stylename"
             :validationRules="['not_empty', 'only_char']"
           />
@@ -40,10 +41,7 @@
             ref="geoJSONInput"
           />
 
-          <OGCTileInput
-            v-if="isVectorTileSelected"
-            @set-tilejson="this.tilejson = $event"
-          />
+          <TileJSON v-if="isVectorTileSelected" />
         </div>
       </v-form>
       <div class="d-flex flex-row">
@@ -55,32 +53,35 @@
           v-if="!$route.name === 'new-project'"
           >back</v-btn
         >
-        <v-btn
+        <!-- <v-btn
           color="primary"
           flat
           @click="validate"
           :loading="loadingData"
           v-if="selectedType"
           >import</v-btn
-        >
+        > -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import OGCTileInput from "@/components/DataImport/OGCTileInput.vue";
+import TileJSON from "@/components/DataImport/TileJSON.vue";
 import GeoJSONInput from "@/components/DataImport/GeoJSONInput.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 
-import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
+import {
+  createProjectFromGeoJSON,
+  createProjectFromTileJSON,
+} from "@/services/ProjectFactory";
 
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
 
 export default {
-  components: { InputTextField, OGCTileInput, GeoJSONInput },
+  components: { InputTextField, TileJSON, GeoJSONInput },
   computed: {
     dialogTitle() {
       return this.selectedType ? "Import your data" : "Choose a data source";
@@ -94,12 +95,12 @@ export default {
       dataSources: null,
       loading: false,
       loadingData: false,
-      tilejson: null,
+      // tilejson: null,
     };
   },
   computed: {
     isVectorTileSelected() {
-      return this.selectedType === "ogc_vectortile";
+      return this.selectedType === "tilejson";
     },
     isGeoJsonSelected() {
       return this.selectedType === "geojson";
@@ -109,50 +110,53 @@ export default {
   mounted() {
     this.dataSources = [
       { label: "GeoJSON", id: "geojson" },
-      { label: "OGC Vectortile", id: "ogc_vectortile" },
+      { label: "TileJSON", id: "tilejson" },
     ];
   },
   methods: {
     ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
-    async validate() {
-      this.loading = true;
-      const { valid } = await this.$refs.form.validate();
+    // async validate() {
+    //   this.loading = true;
+    //   const { valid } = await this.$refs.form.validate();
 
-      if (valid) {
-        if (this.selectedType === "geojson") {
-          this.openFile().then((geojson) => {
-            const project = createProjectFromGeoJSON(
-              this.stylename,
-              this.stylename.toLowerCase(),
-              geojson
-            );
-            this.setProject(project);
-            this.$router.push("/editor");
-          });
-        }
+    //   if (valid) {
+    //     if (this.selectedType === "geojson") {
+    //       this.openFile().then((geojson) => {
+    //         const project = createProjectFromGeoJSON(
+    //           this.stylename,
+    //           this.stylename.toLowerCase(),
+    //           geojson
+    //         );
+    //         console.log(project);
+    //         this.setProject(project);
+    //         this.$router.push("/editor");
+    //       });
+    //     }
 
-        // if (this.selectedType === "ogc_vectortile" && this.tilejson) {
-        //   let factory = new StyleJSONFactory();
+    //     if (this.selectedType === "ogc_vectortile" && this.tilejson) {
+    //       //   let factory = new StyleJSONFactory();
 
-        //   factory.createVectorTileSource(
-        //     this.tilejson.tilejson.vector_layers[0].id,
-        //     this.tilejson.tilejson.tiles[0]
-        //   );
-        //   factory.createDefaultLayers("polygon", "buildings");
-        //   let stylie = factory.build();
+    //       const project = createProjectFromTileJSON();
 
-        //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
+    //       //   factory.createVectorTileSource(
+    //       //     this.tilejson.tilejson.vector_layers[0].id,
+    //       //     this.tilejson.tilejson.tiles[0]
+    //       //   );
+    //       //   factory.createDefaultLayers("polygon", "buildings");
+    //       //   let stylie = factory.build();
 
-        //   let styleObject = new OGCVectorTiles(
-        //     this.tilejson.url,
-        //     this.tilejson.tilejson,
-        //     this.stylename
-        //   );
+    //       //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
 
-        //   this.loadStyleJson(newStyleObject);
-        // }
-      }
-    },
+    //       //   let styleObject = new OGCVectorTiles(
+    //       //     this.tilejson.url,
+    //       //     this.tilejson.tilejson,
+    //       //     this.stylename
+    //       //   );
+
+    //       //   this.loadStyleJson(newStyleObject);
+    //     }
+    //   }
+    // },
 
     // function below will be absolute
     loadStyleJson: function (styleObject) {
@@ -204,7 +208,7 @@ export default {
 <style>
 .form-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 900px;
 }
 .form-input-item-container {
   width: 100%;

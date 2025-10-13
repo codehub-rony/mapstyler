@@ -10,7 +10,8 @@ const geometryToLayerClasses = {
 
 class BaseDataSource {
   constructor(label, source_id, type) {
-    (this._label = label), (this._source_id = source_id);
+    this._label = label;
+    this._source_id = source_id;
     this._type = type;
     this._layers = [];
   }
@@ -55,7 +56,7 @@ class BaseDataSource {
   }
 }
 
-class GeoJSONDataSource extends BaseDataSource {
+export class GeoJSONDataSource extends BaseDataSource {
   constructor(label, source_id, geojson) {
     super(label, source_id, "geojson");
     this._data = geojson;
@@ -70,4 +71,15 @@ class GeoJSONDataSource extends BaseDataSource {
   }
 }
 
-export default GeoJSONDataSource;
+export class VectorTileSource extends BaseDataSource {
+  constructor(label, source_id, tiles_url) {
+    super(label, source_id, "vector");
+    this._tiles = [];
+
+    this._tiles.push(tiles_url);
+  }
+
+  getSourceAsObject() {
+    return { type: this._type, tiles: this._tiles };
+  }
+}

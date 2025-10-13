@@ -32,7 +32,7 @@
 
 <script>
 import ButtonGroup from "@/components/DataImport/ButtonGroup.vue";
-import OGCTileInput from "@/components/DataImport/OGCTileInput.vue";
+import OGCTileInput from "@/components/DataImport/TileJSON.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 
 import OGCVectorTiles from "@/utils/datasources/OGCVectorTiles";
