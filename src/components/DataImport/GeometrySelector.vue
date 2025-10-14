@@ -5,15 +5,28 @@
     }}</v-chip>
 
     <div v-else class="d-flex flex-row align-center">
-      <v-icon
-        @click="editmode = false"
-        size="small"
-        class="mr-3"
-        :color="selected ? '' : 'red accent-4'"
-        >{{ selected ? "mdi-close" : "mdi-alert-circle-outline" }}</v-icon
+      <v-tooltip
+        text="Geometry type is not known. Select one to continue"
+        :disabled="selected"
+      >
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            @click="editmode = false"
+            size="small"
+            class="mr-3"
+            :color="selected ? '' : 'red accent-4'"
+            >{{ selected ? "mdi-close" : "mdi-alert-circle-outline" }}</v-icon
+          ></template
+        ></v-tooltip
       >
 
-      <v-chip-group v-model="selected" mandatory variant="outlined">
+      <v-chip-group
+        v-model="selected"
+        mandatory
+        variant="outlined"
+        @update:model-value="select"
+      >
         <v-chip
           v-for="(geom, i) in geometries"
           :key="i"
@@ -29,8 +42,10 @@
 
 <script>
 export default {
+  emits: ["update-geomtype"],
   props: {
     geometryType: String,
+    layerId: String,
   },
   data() {
     return {
@@ -49,14 +64,14 @@ export default {
   methods: {
     edit: function () {
       this.editmode = this.editmode ? false : true;
-      console.log(this.editmode);
+    },
+    select: function () {
+      this.editmode = false;
+      this.$emit("update-geomtype", {
+        layer_id: this.layerId,
+        geometry_type: this.selected,
+      });
     },
   },
 };
 </script>
-
-<style>
-.geometry-not-found {
-  background-color: red;
-}
-</style>
