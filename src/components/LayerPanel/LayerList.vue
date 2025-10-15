@@ -13,14 +13,13 @@
         >
           <span class="text-subtitle-2">{{ layer.name }}</span>
           <div class="d-flex flex-row">
-            <!-- <EditButton
+            <EditButton
               :layer="layer"
-              :styleObject="styleObject"
+              :datasource="datasource"
               @open-edit-dialog="handleEvent"
-              class="mb-1"
-            /> -->
-            <DeleteButton :callback="deleteLayer" :layer="layer" class="mb-1" />
-            <VisibilityButton :layer="layer" class="mb-1" />
+            />
+            <DeleteButton :callback="deleteLayer" :layer="layer" />
+            <VisibilityButton :layer="layer" />
           </div>
         </div>
 
@@ -35,11 +34,12 @@
             :property="{ layer_id: layer.id, property: key, value: value }"
             @color-updated="updateProperties"
           />
-          <!--
           <InputField
-            v-if="property.component.type === 'input_field'"
-            :property="property"
+            v-if="key === 'line-width'"
+            :property="{ layer_id: layer.id, property: key, value: value }"
+            @update-property="updateProperties"
           />
+          <!--
 
           <DashArrayInput
             v-if="property.component.type === 'input_field_dasharray'"
@@ -97,7 +97,7 @@ export default {
       this.$refs.filterDialog.openDialog(layer);
     },
     updateProperties(update) {
-      this.emitter.emit("set-paint-properties", update);
+      this.emitter.emit("set-paint-property", update);
     },
   },
 };

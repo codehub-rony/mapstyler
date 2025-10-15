@@ -26,12 +26,6 @@ export default {
     this.setHeight();
     this.initMap();
 
-    this.emitter.on("set-paint-properties", (update) => {
-      for (const [key, value] of Object.entries(update.properties)) {
-        this.map.setPaintProperty(update.layer_id, key, value);
-      }
-    });
-
     this.emitter.on("set-layout-properties", (update) => {
       for (const [key, value] of Object.entries(update.properties)) {
         this.map.setLayoutProperty(update.layer_id, key, value);
@@ -50,16 +44,23 @@ export default {
       this.map.on("load", () => {
         if (this.project.datasources.length > 0) {
           this.project.datasources.forEach((datasource) => {
-            if (datasource.type === "geojson") {
-              this.addGeoJSONSource(datasource);
-            }
+            // if (datasource.type === "geojson") {
+            this.addGeoJSONSource(datasource);
+            // }
+
+            this.emitter.on("set-paint-property", (update) => {
+              console.log(update);
+              for (const [key, value] of Object.entries(update.properties)) {
+                this.map.setPaintProperty(update.layer_id, key, value);
+              }
+            });
           });
         }
       });
     },
     addGeoJSONSource(datasource) {
       this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
-
+      console.log(datasource.layers, "=================");
       datasource.layers.forEach((layer) => {
         this.map.addLayer(layer);
       });
