@@ -1,11 +1,12 @@
 class BaseLayer {
-  constructor(source_id, layer_type) {
+  constructor(source_id, source_layer, layer_type) {
     if (!source_id) {
       throw new Error("Missing parameter: source_id");
     }
     this._id = this.#generateUniqueId();
     this._name = `default ${layer_type}`;
     this._source = source_id;
+    this._source_layer = source_layer;
     this._type = layer_type;
     this._paint = {};
     this._layout = { visibility: "visible" };
@@ -40,6 +41,7 @@ class BaseLayer {
       name: this._name,
       type: this._type,
       source: this._source,
+      "source-layer": this._source_layer,
       paint: this._paint,
       layout: this._layout,
     };

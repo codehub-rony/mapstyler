@@ -2,9 +2,10 @@ import FillLayer from "./FillLayer";
 import LineLayer from "./LineLayer";
 
 const geometryToLayerClasses = {
+  polygons: [FillLayer, LineLayer],
   polygon: [FillLayer, LineLayer],
   multipolygon: [FillLayer, LineLayer],
-  line: [LineLayer],
+  lines: [LineLayer],
   // point: [CircleLayer],
 };
 
@@ -15,14 +16,14 @@ class BaseDataSource {
     this._type = type;
     this._layers = [];
   }
-  createDefaultLayers(geometry_type) {
+  createDefaultLayers(geometry_type, source_layer) {
     const LayerClasses = geometryToLayerClasses[geometry_type];
     if (!LayerClasses || LayerClasses.length === 0) {
       throw new Error(`Unsupported geometry type: ${geometry_type}`);
     }
 
     LayerClasses.forEach((LayerClass) => {
-      const layer = new LayerClass(this._source_id);
+      const layer = new LayerClass(this._source_id, source_layer);
       this._layers.push(layer.getLayerAsObject());
     });
   }
