@@ -1,16 +1,18 @@
 <template>
-  <span class="text-body-2">{{ property.component.label }}</span>
+  <span class="text-body-2">{{ propertyLabel }}</span>
   <input
-    v-model="property.value"
+    v-model="value"
     type="number"
     id="name"
     name="name"
     class="pa-1 attribute-text-field text-caption"
+    v-on:change="setValue"
   />
 </template>
 
 <script>
 export default {
+  emits: ["update-property"],
   props: {
     property: Object,
   },
@@ -19,8 +21,21 @@ export default {
       value: 0,
     };
   },
+  computed: {
+    propertyLabel() {
+      return this.property.property.split("-")[1];
+    },
+  },
   mounted() {
     this.value = this.property.value;
+  },
+  watch: {
+    value: function (newVal, oldVal) {
+      console.log(this.value, newVal, oldVal);
+      let update = { layer_id: this.property.layer_id, properties: {} };
+      update.properties[this.property.property] = this.value;
+      this.$emit("update-property", update);
+    },
   },
 };
 </script>

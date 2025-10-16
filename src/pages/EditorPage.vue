@@ -2,11 +2,7 @@
   <v-container>
     <v-row dense>
       <v-col cols="12" xl="2" lg="3" md="3" sm="3">
-        <LayerPanel
-          :styleObjects="styleObjects"
-          :currentProject="currentProject"
-          @save-project="saveProject"
-        />
+        <LayerPanel :project="project" @save-project="saveProject" />
       </v-col>
 
       <v-col cols="12" xl="10" lg="8" md="9" sm="9">
@@ -41,6 +37,7 @@ export default {
       "styleObjects",
       "currentProject",
       "originalState",
+      "project",
     ]),
   },
 
@@ -78,6 +75,7 @@ export default {
           geometry_type: styleObject.geometry_type,
           source_id: styleObject.source_id,
           tilejson_url: styleObject.tilejson_url,
+          tilematrixset_url: styleObject.tilematrixset_url,
           stylejson: JSON.parse(styleObject.getStyleJSON()),
         };
 

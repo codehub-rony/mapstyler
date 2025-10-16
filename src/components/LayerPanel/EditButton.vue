@@ -18,11 +18,12 @@ export default {
   components: { LayerEditDialog },
   props: {
     layer: Object,
-    styleObject: Object,
+    datasource: Object,
   },
   methods: {
     handleClick: async function () {
-      let fields = this.styleObject.fields;
+      // let fields = this.styleObject.fields;
+      let fields = [];
       let dialog_mode = "edit";
       this.$refs.LayerEditDialog.openDialog(this.layer, fields, dialog_mode);
     },

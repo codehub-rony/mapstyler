@@ -1,7 +1,6 @@
 <template>
-  <span class="text-body-2">{{ property.component.label }}</span>
+  <span class="text-body-2">{{ propertyLabel }}</span>
   <div
-    v-if="property.component.type === 'color_picker'"
     class="layerlist-item-color"
     v-bind:style="{ backgroundColor: rgba }"
     @click="handleClick"
@@ -33,7 +32,10 @@ export default {
   },
   computed: {
     rgba() {
-      return `rgba(${this.property.value.r}, ${this.property.value.g}, ${this.property.value.b}, ${this.property.value.a})`;
+      return `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a}`;
+    },
+    propertyLabel() {
+      return this.property.property.split("-")[1];
     },
   },
   data() {
@@ -49,13 +51,30 @@ export default {
     };
   },
   mounted() {
-    this.color.r = this.property.value.r;
-    this.color.g = this.property.value.g;
-    this.color.b = this.property.value.b;
-    this.color.a = this.property.value.a;
+    this.setColorFromProperty(this.property.value);
   },
 
   methods: {
+    parseRGB(rgbString) {
+      const result = rgbString.match(/\d+/g); // extract all numbers
+      if (result && result.length === 3) {
+        return {
+          r: parseInt(result[0]),
+          g: parseInt(result[1]),
+          b: parseInt(result[2]),
+        };
+      }
+      return null;
+    },
+
+    setColorFromProperty(property) {
+      const rgb = this.parseRGB(property);
+      if (rgb) {
+        this.color.r = rgb.r;
+        this.color.g = rgb.g;
+        this.color.b = rgb.b;
+      }
+    },
     handleClick: function (e) {
       // Prevent colorpicker from closing when the colorpicker itself is clicked
       if (e.target.classList.contains("layerlist-item-color")) {
@@ -64,7 +83,17 @@ export default {
     },
     handleColorSelection: function (e) {
       this.color.a = this.color.a ? Math.round(this.color.a * 100) / 100 : 1;
-      this.$emit("color-updated", { color: this.color });
+
+      let updated_color = { layer_id: this.property.layer_id, properties: {} };
+      updated_color.properties[
+        this.property.property
+      ] = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+      updated_color.properties[
+        this.property.property.includes("fill")
+          ? "fill-opacity"
+          : "line-opacity"
+      ] = this.color.a;
+      this.$emit("color-updated", updated_color);
     },
     closeColorPicker: function () {
       if (this.colorPickerIsOpen) {

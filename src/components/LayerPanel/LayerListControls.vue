@@ -5,7 +5,7 @@
       @click="handleCollapse"
       :style="{ cursor: 'pointer' }"
     >
-      {{ styleObject.name }}
+      {{ datasource.label }}
     </div>
 
     <div class="d-flex flex-row">
@@ -82,7 +82,7 @@ import utils from "@/utils/common.js";
 export default {
   emits: ["collapse"],
   props: {
-    styleObject: Object,
+    datasource: Object,
   },
   data() {
     return {
@@ -116,7 +116,7 @@ export default {
   methods: {
     ...mapActions(useAppStore, ["deleteStyleObject"]),
     deleteDataSet: function () {
-      this.deleteStyleObject(this.styleObject.id);
+      this.deleteStyleObject(this.datasource.id);
     },
     handleCollapse: function () {
       this.isCollapsed = this.isCollapsed ? false : true;
@@ -126,14 +126,14 @@ export default {
       console.log("clicked rename");
     },
     downloadStyleJSON: function () {
-      utils.download_stylejson(this.styleObject);
+      utils.download_stylejson(this.datasource);
     },
   },
   watch: {
     items: {
       handler() {
         const item = this.items.find((item) => item.title === "hide layer");
-        this.styleObject.stylejson.setVisibilityAllLayers(item.isHidden);
+        // this.styleObject.stylejson.setVisibilityAllLayers(item.isHidden);
       },
       deep: true,
     },

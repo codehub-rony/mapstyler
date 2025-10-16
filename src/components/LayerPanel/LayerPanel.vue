@@ -1,26 +1,26 @@
 <template>
   <v-sheet>
     <div class="d-flex flex-row justify-space-between mb-2">
-      <h2 class="text-h5 font-weight-light">Datasets</h2>
+      <div class="text-h6 font-weight-light">Datasets</div>
       <v-btn
         size="x-small"
         variant="text"
         @click="openDialogForNewSource"
         class="mt-2"
-        v-if="isAuthenticated() && styleObjects.length > 0"
+        v-if="isAuthenticated() && project.datasources.length > 0"
         >add new</v-btn
       >
     </div>
     <v-scroll-y-transition>
       <div>
         <LayerList
-          v-for="layer in styleObjects"
-          :key="layer.source_id"
-          :styleObject="layer"
+          v-for="(datasource, key) in project.datasources"
+          :key="key"
+          :datasource="datasource"
         />
       </div>
     </v-scroll-y-transition>
-    <div class="d-flex flex-column" v-if="styleObjects.length > 0">
+    <div class="d-flex flex-column" v-if="project.datasources.length > 0">
       <v-btn
         block
         color="primary"
@@ -72,21 +72,21 @@ import utils from "@/utils/common.js";
 import NewTileJSONDialog from "@/components/DataImport/NewTileJSONDialog.vue";
 
 // store
-
 import { useAuthStore } from "@/store/auth.js";
+import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
+
 import _ from "lodash";
 
 export default {
-  emits: ["save-project"],
+  // emits: ["save-project"],
   components: {
     DownloadBtn,
     LayerList,
     NewTileJSONDialog,
   },
   props: {
-    styleObjects: Array,
-    currentProject: Object,
+    project: Object,
   },
   data() {
     return {
@@ -96,6 +96,7 @@ export default {
 
   methods: {
     ...mapActions(useAuthStore, ["isAuthenticated"]),
+    ...mapActions(useAppStore, ["saveStyle"]),
 
     openDialogForNewSource: function () {
       this.$refs.newdatasource.openDialog();
@@ -106,7 +107,8 @@ export default {
       });
     },
     saveProject: function () {
-      this.$emit("save-project");
+      this.saveProject();
+      // this.$emit("save-project");
     },
   },
 };

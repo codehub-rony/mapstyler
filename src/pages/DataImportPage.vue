@@ -80,8 +80,7 @@
 <script>
 import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
-
-import GeoJSONFeatures from "@/utils/datasources/GeoJSONFeatures";
+import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -99,18 +98,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject"]),
+    ...mapActions(useAppStore, ["setProject"]),
     loadDemoData: function () {
       this.loading = true;
       setTimeout(() => {
-        let styleObject = new GeoJSONFeatures("Municipalities", demo_data);
+        const project = createProjectFromGeoJSON(
+          "Municipalities",
+          "municipalities",
+          demo_data
+        );
 
-        this.handleLoadData(styleObject);
+        this.setProject(project);
+        this.$router.push("/editor");
       }, 100);
-    },
-    handleLoadData: function (styleObject) {
-      this.addStyleObject(styleObject);
-      this.$router.push("/editor");
     },
   },
 };

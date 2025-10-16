@@ -124,11 +124,14 @@ export default {
     save: function () {
       if (this.name) {
         this.layer.name = this.name;
-        this.conditionUpdates.forEach((update) => {
-          this.filter.setConditions(update);
-        });
+        if (this.conditionUpdates.length > 0) {
+          this.conditionUpdates.forEach((update) => {
+            this.filter.setConditions(update);
+          });
 
-        this.layer.setFilter(this.filter);
+          this.layer.setFilter(this.filter);
+        }
+
         this.dialogIsOpen = false;
         this.$emit("add-layer", this.layer);
       } else {

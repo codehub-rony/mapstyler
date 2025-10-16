@@ -14,26 +14,22 @@ export default {
   },
   data() {
     return {
-      isHidden: true,
+      isVisible: true,
     };
   },
   computed: {
     icon() {
-      return this.isHidden ? "mdi-eye-outline" : "mdi-eye-off-outline";
+      return this.isVisible ? "mdi-eye-outline" : "mdi-eye-off-outline";
     },
   },
   methods: {
     handleClick: function () {
-      this.isHidden = this.isHidden ? false : true;
-      this.layer.setVisibility(this.isHidden);
-    },
-  },
-  watch: {
-    layer: {
-      handler() {
-        this.isHidden = this.layer.getVisibility();
-      },
-      deep: true,
+      this.isVisible = this.isVisible ? false : true;
+      let update = {
+        layer_id: this.layer.id,
+        properties: { visibility: this.isVisible ? "visible" : "none" },
+      };
+      this.emitter.emit("set-layout-properties", update);
     },
   },
 };

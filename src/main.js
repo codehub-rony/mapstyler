@@ -20,6 +20,11 @@ import "unfonts.css";
 const pinia = createPinia();
 const app = createApp(App);
 
+// Eventbus
+import mitt from "mitt";
+const emitter = mitt();
+app.config.globalProperties.emitter = emitter;
+
 registerPlugins(app);
 
 app.use(pinia);
