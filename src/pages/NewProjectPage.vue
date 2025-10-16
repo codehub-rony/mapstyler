@@ -35,7 +35,6 @@
 <script>
 import DefaultButton from "@/components/DefaultButton.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
-import OGCTileInput from "@/components/DataImport/OGCTileInput.vue";
 import NotificationBar from "@/components/GenericComponents/NotificationBar.vue";
 
 // ApiService
@@ -49,7 +48,6 @@ import { mapActions } from "pinia";
 export default {
   components: {
     DefaultButton,
-    OGCTileInput,
     InputTextField,
     NotificationBar,
   },

@@ -53,14 +53,14 @@
           v-if="!$route.name === 'new-project'"
           >back</v-btn
         >
-        <!-- <v-btn
+        <v-btn
           color="primary"
           flat
           @click="validate"
           :loading="loadingData"
           v-if="selectedType"
           >import</v-btn
-        > -->
+        >
       </div>
     </div>
   </div>
@@ -115,48 +115,48 @@ export default {
   },
   methods: {
     ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
-    // async validate() {
-    //   this.loading = true;
-    //   const { valid } = await this.$refs.form.validate();
+    async validate() {
+      this.loading = true;
+      const { valid } = await this.$refs.form.validate();
 
-    //   if (valid) {
-    //     if (this.selectedType === "geojson") {
-    //       this.openFile().then((geojson) => {
-    //         const project = createProjectFromGeoJSON(
-    //           this.stylename,
-    //           this.stylename.toLowerCase(),
-    //           geojson
-    //         );
-    //         console.log(project);
-    //         this.setProject(project);
-    //         this.$router.push("/editor");
-    //       });
-    //     }
+      if (valid) {
+        if (this.selectedType === "geojson") {
+          this.openFile().then((geojson) => {
+            const project = createProjectFromGeoJSON(
+              this.stylename,
+              this.stylename.toLowerCase(),
+              geojson
+            );
 
-    //     if (this.selectedType === "ogc_vectortile" && this.tilejson) {
-    //       //   let factory = new StyleJSONFactory();
+            this.setProject(project);
+            this.$router.push("/editor");
+          });
+        }
 
-    //       const project = createProjectFromTileJSON();
+        //     if (this.selectedType === "ogc_vectortile" && this.tilejson) {
+        //       //   let factory = new StyleJSONFactory();
 
-    //       //   factory.createVectorTileSource(
-    //       //     this.tilejson.tilejson.vector_layers[0].id,
-    //       //     this.tilejson.tilejson.tiles[0]
-    //       //   );
-    //       //   factory.createDefaultLayers("polygon", "buildings");
-    //       //   let stylie = factory.build();
+        //       const project = createProjectFromTileJSON();
 
-    //       //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
+        //       //   factory.createVectorTileSource(
+        //       //     this.tilejson.tilejson.vector_layers[0].id,
+        //       //     this.tilejson.tilejson.tiles[0]
+        //       //   );
+        //       //   factory.createDefaultLayers("polygon", "buildings");
+        //       //   let stylie = factory.build();
 
-    //       //   let styleObject = new OGCVectorTiles(
-    //       //     this.tilejson.url,
-    //       //     this.tilejson.tilejson,
-    //       //     this.stylename
-    //       //   );
+        //       //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
 
-    //       //   this.loadStyleJson(newStyleObject);
-    //     }
-    //   }
-    // },
+        //       //   let styleObject = new OGCVectorTiles(
+        //       //     this.tilejson.url,
+        //       //     this.tilejson.tilejson,
+        //       //     this.stylename
+        //       //   );
+
+        //       //   this.loadStyleJson(newStyleObject);
+        //     }
+      }
+    },
 
     // function below will be absolute
     loadStyleJson: function (styleObject) {

@@ -36,32 +36,42 @@
       ></v-text-field>
     </v-form>
 
-    <div class="dataset-container pa-3" v-if="vector_layers.length > 0">
-      <div
-        class="d-flex flex-row justify-space-between mb-3 text-text-subtitle-2 font-weight-bold"
-      >
-        <div>Layer</div>
-        <div>Geometry type</div>
-      </div>
-      <div
-        v-for="(layer, i) in vector_layers"
-        :key="i"
-        class="d-flex flex-row align-center justify-space-between"
-      >
-        <div class="cursor-select" @click="selectLayer(layer)">
-          <v-icon>
-            {{
-              selected.some((l) => l.id === layer.id)
-                ? "mdi-checkbox-marked"
-                : "mdi-checkbox-blank-outline"
-            }}</v-icon
-          ><span class="ml-3">{{ layer.id }} </span>
+    <div
+      class="dataset-container pa-3 d-flex flex-row justify-space-between"
+      v-if="vector_layers.length > 0"
+    >
+      <div class="d-flex flex-column justify-space-between mb-3">
+        <div class="text-text-subtitle-2 font-weight-bold">Layer</div>
+
+        <div
+          v-for="(layer, i) in vector_layers"
+          :key="i"
+          class="d-flex flex-row align-center justify-space-between"
+        >
+          <div class="cursor-select" @click="selectLayer(layer)">
+            <v-icon>
+              {{
+                selected.some((l) => l.id === layer.id)
+                  ? "mdi-checkbox-marked"
+                  : "mdi-checkbox-blank-outline"
+              }}</v-icon
+            ><span class="ml-3">{{ layer.id }} </span>
+          </div>
         </div>
-        <GeometrySelector
-          :geometryType="layer.geometry_type"
-          :layerId="layer.id"
-          @update-geomtype="setGeoemtryType"
-        />
+      </div>
+      <div>
+        <div
+          class="text-text-subtitle-2 font-weight-bold justify-space-between mt-1"
+        >
+          Geometry type
+        </div>
+        <div v-for="(layer, i) in vector_layers" :key="i">
+          <GeometrySelector
+            :geometryType="layer.geometry_type"
+            :layerId="layer.id"
+            @update-geomtype="setGeoemtryType"
+          />
+        </div>
       </div>
     </div>
     <div class="d-flex align-center mt-5 flex-column">
@@ -83,6 +93,12 @@
 // TO DO: refactor timer
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 import GeometrySelector from "./GeometrySelector.vue";
+
+import { createProjectFromTileJSON } from "@/services/ProjectFactory";
+
+// store
+import { useAppStore } from "@/store/app.js";
+import { mapActions } from "pinia";
 export default {
   components: { InputTextField, GeometrySelector },
   data() {
@@ -106,6 +122,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
     setGeoemtryType: function (update) {
       this.vector_layers.forEach((vector_layer) => {
         if (vector_layer.id === update.layer_id) {
@@ -149,6 +166,15 @@ export default {
 
       if (valid) {
         this.stopTimer();
+        const project = createProjectFromTileJSON(
+          this.stylename,
+          this.tilejson,
+          this.selected,
+          this.tilejson.tiles[0]
+        );
+        console.log(project);
+        this.setProject(project);
+        this.$router.push("/editor");
       }
     },
 

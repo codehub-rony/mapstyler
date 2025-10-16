@@ -1,8 +1,12 @@
 <template>
   <div>
-    <v-chip @click="edit" v-if="!editmode && selected" class="text-blue ma-2">{{
-      selected
-    }}</v-chip>
+    <v-tooltip v-if="!editmode && selected" text="Click to edit geometry type">
+      <template v-slot:activator="{ props }">
+        <v-chip v-bind="props" @click="edit" class="text-blue ma-2">{{
+          selected
+        }}</v-chip></template
+      ></v-tooltip
+    >
 
     <div v-else class="d-flex flex-row align-center">
       <v-tooltip
