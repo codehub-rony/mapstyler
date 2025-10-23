@@ -1,5 +1,6 @@
 import FillLayer from "./FillLayer";
 import LineLayer from "./LineLayer";
+import CircleLayer from "./CircleLayer";
 
 const geometryToLayerClasses = {
   polygons: [FillLayer, LineLayer],
@@ -7,7 +8,7 @@ const geometryToLayerClasses = {
   multipolygon: [FillLayer, LineLayer],
   lines: [LineLayer],
   linestring: [LineLayer],
-  // point: [CircleLayer],
+  point: [CircleLayer],
 };
 
 class BaseDataSource {
