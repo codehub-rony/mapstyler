@@ -6,6 +6,7 @@ const geometryToLayerClasses = {
   polygon: [FillLayer, LineLayer],
   multipolygon: [FillLayer, LineLayer],
   lines: [LineLayer],
+  linestring: [LineLayer],
   // point: [CircleLayer],
 };
 
