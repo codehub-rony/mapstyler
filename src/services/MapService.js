@@ -15,7 +15,7 @@ export default class MapService {
   createMap(container, options = {}) {
     if (!this.map) {
       this.optionsCache = {
-        style: "https://tiles.openfreemap.org/styles/bright",
+        style: "https://tiles.openfreemap.org/styles/positron",
         center: [5.204, 52.062],
         zoom: 6,
         ...options,
