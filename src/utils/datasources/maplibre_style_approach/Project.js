@@ -1,6 +1,6 @@
 class Project {
-  constructor(stylename, description) {
-    this._id = null;
+  constructor(id = null, stylename, description) {
+    this._id = id;
     this._name = stylename;
     this._description = description ? description : "";
     this._datasources = [];
