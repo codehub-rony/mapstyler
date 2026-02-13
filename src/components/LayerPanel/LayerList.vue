@@ -15,7 +15,7 @@
             <span
               class="text-subtitle-2"
               style="white-space: normal; word-break: break-word"
-              >{{ layer.name }}</span
+              >{{ layer["source-layer"] }}</span
             >
           </div>
           <div class="d-flex flex-row">
