@@ -39,9 +39,7 @@
         >
         <v-row v-if="customData" dense justify="center"
           ><v-col cols="4" class="d-flex justify-center">
-            <LoadData
-              @import-data="handleLoadData"
-              @go-back="customData = false" /></v-col
+            <LoadData @go-back="customData = false" /></v-col
         ></v-row>
         <v-row v-if="!customData">
           <v-col>
@@ -80,7 +78,7 @@
 <script>
 import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
-import { createProjectFromGeoJSON } from "@/services/ProjectFactory";
+import Project from "@/utils/datasources/maplibre_style_approach/Project";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -102,12 +100,16 @@ export default {
     loadDemoData: function () {
       this.loading = true;
       setTimeout(() => {
-        const project = createProjectFromGeoJSON(
+        const datasource = new GeoJSONDataSource(
           "Municipalities",
           "municipalities",
           demo_data,
         );
+        const geometry_type = geojson.features[0].geometry.type.toLowerCase();
+        datasource.createDefaultLayers(geometry_type);
 
+        const project = new Project(null, this.stylename, null);
+        project.addDataSource(this.datasource);
         this.setProject(project);
         this.$router.push("/editor");
       }, 100);

@@ -47,22 +47,17 @@
 
 <script>
 import TileJSONSource from "@/components/DataImport/TileJSONSource.vue";
-import GeoJSONInput from "@/components/DataImport/GeoJSONInput.vue";
+import GeoJSONSource from "@/components/DataImport/GeoJSONSource.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 
 import Project from "@/utils/datasources/maplibre_style_approach/Project";
-
-import {
-  createProjectFromGeoJSON,
-  createProjectFromTileJSON,
-} from "@/services/ProjectFactory";
 
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
 
 export default {
-  components: { InputTextField, TileJSONSource, GeoJSONInput },
+  components: { InputTextField, TileJSONSource, GeoJSONSource },
   computed: {
     dialogTitle() {
       return this.selectedType ? "Import your data" : "Choose a data source";
@@ -92,54 +87,11 @@ export default {
         const project = new Project(null, this.stylename, null);
         project.addDataSource(this.datasource);
 
-        console.log("created project", project);
         this.setProject(project);
         this.$router.push("/editor");
       }
-
-      // if (valid) {
-      //   if (this.selectedType === "geojson") {
-      //     this.openFile().then((geojson) => {
-      //       const project = createProjectFromGeoJSON(
-      //         this.stylename,
-      //         this.stylename.toLowerCase(),
-      //         geojson,
-      //       );
-      //     });
-      //   }
     },
 
-    // Move this function to GeoJsoninput
-    isValidJSON: function (file) {
-      try {
-        JSON.parse(file);
-      } catch (e) {
-        return false;
-      }
-      return true;
-    },
-
-    openFile: async function (e) {
-      let reader = new FileReader();
-      const promise = new Promise((resolve, reject) => {
-        reader.readAsText(this.fileInput);
-        reader.onload = () => {
-          if (this.isValidJSON(reader.result)) {
-            this.loading = false;
-
-            resolve(reader.result);
-          } else {
-            this.$refs.geoJSONInput.messages.push(
-              "Invalid JSON structure. Could not parse the GeoJSON file",
-            );
-
-            reject();
-          }
-        };
-      });
-
-      return promise;
-    },
     handleBackClick: function () {
       if (this.selectedType) {
         this.selectedType = null;
