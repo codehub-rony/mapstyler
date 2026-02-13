@@ -79,6 +79,7 @@
 import demo_data from "../assets/municipalities.json";
 import LoadData from "@/components/DataImport/LoadData.vue";
 import Project from "@/utils/datasources/maplibre_style_approach/Project";
+import { GeoJSONDataSource } from "@/utils/datasources/maplibre_style_approach/DataSources";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -105,11 +106,12 @@ export default {
           "municipalities",
           demo_data,
         );
-        const geometry_type = geojson.features[0].geometry.type.toLowerCase();
+        const geometry_type = demo_data.features[0].geometry.type.toLowerCase();
+        console.log(geometry_type);
         datasource.createDefaultLayers(geometry_type);
 
         const project = new Project(null, this.stylename, null);
-        project.addDataSource(this.datasource);
+        project.addDataSource(datasource);
         this.setProject(project);
         this.$router.push("/editor");
       }, 100);
