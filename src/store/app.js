@@ -29,7 +29,7 @@ export const useAppStore = defineStore("app", {
     hasUnsavedChanges() {
       let unsaved_edits = this.originalState.some((original_styleObject) => {
         let styleObject = this.styleObjects.find(
-          (x) => x.id === original_styleObject.id
+          (x) => x.id === original_styleObject.id,
         );
 
         return !_.isEqual(original_styleObject, styleObject);
@@ -47,13 +47,13 @@ export const useAppStore = defineStore("app", {
     addStyleObject(styleObject) {
       this.styleObjects.push(styleObject);
     },
-    deleteStyleObject(style_id) {
-      this.styleObjects = this.styleObjects.filter(
-        (style) => style.id !== style_id
+    deleteDatasource(datasource_id_to_delete) {
+      this.project.datasources.splice(
+        this.project.datasources.findIndex(
+          (ds) => ds.source_id === datasource_id_to_delete,
+        ),
+        1,
       );
-    },
-    isStyleObjectLoaded() {
-      return this.styleObjects.length > 0 ? true : false;
     },
 
     saveProject() {

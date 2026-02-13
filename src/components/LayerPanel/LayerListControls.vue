@@ -92,7 +92,6 @@ export default {
         {
           title: "hide layer",
           icon: "mdi-delete-outline",
-          action: this.toggleVisibility,
           isHidden: true,
         },
         {
@@ -114,9 +113,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["deleteStyleObject"]),
+    ...mapActions(useAppStore, ["deleteDatasource"]),
+
     deleteDataSet: function () {
-      this.deleteStyleObject(this.datasource.id);
+      this.deleteDatasource(this.datasource.id);
     },
     handleCollapse: function () {
       this.isCollapsed = this.isCollapsed ? false : true;
@@ -132,8 +132,15 @@ export default {
   watch: {
     items: {
       handler() {
-        const item = this.items.find((item) => item.title === "hide layer");
-        // this.styleObject.stylejson.setVisibilityAllLayers(item.isHidden);
+        this.datasource.layers.forEach((layer) => {
+          layer.layout.visibility =
+            layer.layout.visibility === "visible" ? "none" : "visible";
+          let update = {
+            layer_id: layer.id,
+            properties: { visibility: layer.layout.visibility },
+          };
+          this.emitter.emit("set-layout-properties", update);
+        });
       },
       deep: true,
     },
