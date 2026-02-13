@@ -57,7 +57,7 @@ export interface VectorLayer {
 export function createProjectFromGeoJSON(
   name: string,
   source_id: string,
-  geojson: GeoJSON
+  geojson: GeoJSON,
 ): Project {
   if (typeof geojson === "string") {
     geojson = JSON.parse(geojson);
@@ -86,13 +86,11 @@ export function createProjectFromTileJSON(
   name: string,
   tilejson: TileJSON,
   vector_layers: Array<object>,
-  tiles_url: string
+  tiles_url: string,
 ): Project {
-  console.log("yaya");
   const datasource = new VectorTileSource(name, tilejson.name, tiles_url);
 
   vector_layers.forEach((layer) => {
-    console.log(layer, "==========");
     datasource.createDefaultLayers(layer.geometry_type, layer.id);
   });
 

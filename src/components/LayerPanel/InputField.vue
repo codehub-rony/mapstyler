@@ -30,10 +30,11 @@ export default {
     this.value = this.property.value;
   },
   watch: {
-    value: function (newVal, oldVal) {
-      console.log(this.value, newVal, oldVal);
+    value: function () {
       let update = { layer_id: this.property.layer_id, properties: {} };
-      update.properties[this.property.property] = this.value;
+
+      let new_value = this.value === "" ? 0 : this.value;
+      update.properties[this.property.property] = new_value;
       this.$emit("update-property", update);
     },
   },
