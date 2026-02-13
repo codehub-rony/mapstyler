@@ -79,7 +79,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
+    ...mapActions(useAppStore, ["setProject"]),
     async validate() {
       this.loading = true;
 
