@@ -1,28 +1,33 @@
 <template>
-  <v-dialog v-model="isOpen" max-width="400" persistent>
+  <v-dialog v-model="isOpen" max-width="800" persistent>
     <v-sheet>
       <v-container class="mb-4">
         <v-row>
           <v-col>
             <div class="d-flex flex-row mb-5">
-              <span class="text-h5 font-weight-light">Add tilejson</span>
+              <span class="text-h5 font-weight-light">Add data</span>
             </div>
           </v-col>
         </v-row>
         <v-row dense
           ><v-col cols="12">
             <div class="d-flex flex-column form-input-item-container">
-              <InputTextField
-                v-model="styleName"
-                :validationRules="['not_empty', 'only_char']"
+              <DataSourceSelector
+                @select="selectedType = $event"
+                v-if="!selectedType"
               />
-              <OGCTileInput @set-tilejson="setTilejson" />
+
+              <component
+                :is="selectedType"
+                v-if="selectedType"
+                @datasource-created="datasource = $event"
+              />
             </div>
           </v-col>
         </v-row>
         <v-row justify="center">
           <v-col cols="auto" class="text-center">
-            <ButtonGroup @confirm="createTileJson" @decline="closeDialog" />
+            <ButtonGroup @confirm="addData" @decline="closeDialog" />
           </v-col>
         </v-row>
       </v-container>
@@ -32,48 +37,41 @@
 
 <script>
 import ButtonGroup from "@/components/DataImport/ButtonGroup.vue";
-import OGCTileInput from "@/components/DataImport/TileJSON.vue";
+import TileJSONSource from "@/components/DataImport/TileJSONSource.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
-
-import OGCVectorTiles from "@/utils/datasources/OGCVectorTiles";
+import DataSourceSelector from "./DataSourceSelector.vue";
 
 // store
 import { useAppStore } from "@/store/app.js";
-import { mapActions } from "pinia";
+import { mapState } from "pinia";
 
 export default {
   components: {
     ButtonGroup,
-    OGCTileInput,
+    TileJSONSource,
     InputTextField,
+    DataSourceSelector,
+  },
+  computed: {
+    ...mapState(useAppStore, ["project"]),
   },
   data() {
     return {
+      selectedType: null,
       isOpen: false,
-      styleName: null,
-      tilejson: null,
+      datasource: null,
     };
   },
 
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject"]),
-    createTileJson() {
-      if (this.tilejson && this.styleName) {
-        let styleObject = new OGCVectorTiles(
-          this.tilejson.url,
-          this.tilejson.tilejson,
-          this.styleName,
-          null
-        );
-
-        this.addStyleObject(styleObject);
+    addData() {
+      if (this.datasource) {
+        this.project.addDataSource(this.datasource);
 
         this.closeDialog();
       }
     },
-    setTilejson: function (tilejson) {
-      this.tilejson = tilejson;
-    },
+
     openDialog() {
       this.isOpen = true;
     },

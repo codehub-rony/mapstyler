@@ -43,6 +43,7 @@ export default {
     ...mapActions(useNotificationStore, ["showNotification"]),
     openProject: function (project) {
       this.setCurrentProject(project);
+      // refactor to setProject and include create Project from class.. See newprojectpage
       this.$router.push({ name: "editor" });
     },
     deleteProject(project) {
