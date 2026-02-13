@@ -63,11 +63,11 @@
           /> -->
         </div>
       </div>
-      <BtnCreateLayer
+      <!-- <BtnCreateLayer
         :styleObject="styleObject"
         mode="new"
         ref="filterDialog"
-      />
+      /> -->
     </div>
   </div>
 </template>

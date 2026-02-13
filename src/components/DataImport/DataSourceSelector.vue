@@ -24,14 +24,13 @@ export default {
   data() {
     return {
       dataSources: [
-        { label: "GeoJSON", id: "geojson", component: "GeoJSONInput" },
+        { label: "GeoJSON", id: "geojson", component: "GeoJSONSource" },
         { label: "TileJSON", id: "tilejson", component: "TileJSONSource" },
       ],
     };
   },
   methods: {
     handleClick: function (source) {
-      console.log(source);
       this.$emit("select", source.component);
     },
   },
