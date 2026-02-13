@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-row justify-space-between">
     <div
-      class="text-h6 font-weight-light"
+      class="text-subtitle-1 font-weight-light"
       @click="handleCollapse"
       :style="{ cursor: 'pointer' }"
     >
