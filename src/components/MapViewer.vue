@@ -36,6 +36,13 @@ export default {
       if (this.map.getLayer(layer_id)) this.map.removeLayer(layer_id);
     });
   },
+  unmounted() {
+    const map_service = new MapService();
+    map_service.destroyMap();
+    this.emitter.off("set-paint-property");
+    this.emitter.off("set-layout-properties");
+    this.map = null;
+  },
   methods: {
     initMap: function () {
       const map_service = new MapService();
@@ -44,12 +51,9 @@ export default {
       this.map.on("load", () => {
         if (this.project.datasources.length > 0) {
           this.project.datasources.forEach((datasource) => {
-            // if (datasource.type === "geojson") {
             this.addGeoJSONSource(datasource);
-            // }
 
             this.emitter.on("set-paint-property", (update) => {
-              console.log(update);
               for (const [key, value] of Object.entries(update.properties)) {
                 this.map.setPaintProperty(update.layer_id, key, value);
               }
@@ -60,7 +64,6 @@ export default {
     },
     addGeoJSONSource(datasource) {
       this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
-      console.log(datasource.layers, "=================");
       datasource.layers.forEach((layer) => {
         this.map.addLayer(layer);
       });
