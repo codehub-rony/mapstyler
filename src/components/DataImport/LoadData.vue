@@ -1,49 +1,28 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <div class="d-flex flex-column align-center">
-      <div class="d-flex flex-row mb-5">
-        <span class="text-h5 font-weight-light">{{ dialogTitle }}</span>
-      </div>
+      <span class="text-h5 font-weight-light mt-2 mb-6">{{ dialogTitle }}</span>
 
-      <div class="d-flex flex-row justify-center" v-if="!selectedType">
-        <div v-for="(source, i) in dataSources" :key="i">
-          <v-hover>
-            <template v-slot:default="{ isHovering, props }">
-              <v-card
-                v-bind="props"
-                :color="isHovering ? 'primary' : undefined"
-                class="pa-4 ma-4 testy"
-                rounded="1"
-                flat
-                @click="selectedType = source.id"
-              >
-                <h4>{{ source.label }}</h4>
-              </v-card>
-            </template>
-          </v-hover>
-        </div>
-      </div>
-
-      <v-form ref="form" class="form-container d-flex flex-row pa-4">
-        <div
-          class="d-flex flex-column form-input-item-container"
+      <DataSourceSelector
+        @select="selectedType = $event"
+        v-if="!selectedType"
+      />
+      <div class="d-flex flex-column" style="width: 100%">
+        <InputTextField
+          v-model="stylename"
           v-if="selectedType"
+          :validationRules="['not_empty', 'only_char']"
         >
-          <InputTextField
-            v-if="isGeoJsonSelected"
-            v-model="stylename"
-            :validationRules="['not_empty', 'only_char']"
-          />
+          <template #label> Style name </template></InputTextField
+        >
 
-          <GeoJSONInput
-            v-if="isGeoJsonSelected"
-            @update-input="(item) => (fileInput = item.value)"
-            ref="geoJSONInput"
-          />
+        <component
+          :is="selectedType"
+          v-if="selectedType"
+          @datasource-created="datasource = $event"
+        />
+      </div>
 
-          <TileJSON v-if="isVectorTileSelected" />
-        </div>
-      </v-form>
       <div class="d-flex flex-row">
         <v-btn
           flat
@@ -67,9 +46,11 @@
 </template>
 
 <script>
-import TileJSON from "@/components/DataImport/TileJSON.vue";
+import TileJSONSource from "@/components/DataImport/TileJSONSource.vue";
 import GeoJSONInput from "@/components/DataImport/GeoJSONInput.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
+
+import Project from "@/utils/datasources/maplibre_style_approach/Project";
 
 import {
   createProjectFromGeoJSON,
@@ -81,7 +62,7 @@ import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
 
 export default {
-  components: { InputTextField, TileJSON, GeoJSONInput },
+  components: { InputTextField, TileJSONSource, GeoJSONInput },
   computed: {
     dialogTitle() {
       return this.selectedType ? "Import your data" : "Choose a data source";
@@ -92,76 +73,40 @@ export default {
       fileInput: null,
       stylename: null,
       selectedType: null,
-      dataSources: null,
+      datasource: null,
+      dataSources: [
+        { label: "GeoJSON", id: "geojson" },
+        { label: "TileJSON", id: "tilejson" },
+      ],
       loading: false,
       loadingData: false,
-      // tilejson: null,
     };
   },
-  computed: {
-    isVectorTileSelected() {
-      return this.selectedType === "tilejson";
-    },
-    isGeoJsonSelected() {
-      return this.selectedType === "geojson";
-    },
-  },
 
-  mounted() {
-    this.dataSources = [
-      { label: "GeoJSON", id: "geojson" },
-      { label: "TileJSON", id: "tilejson" },
-    ];
-  },
   methods: {
     ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
     async validate() {
       this.loading = true;
-      const { valid } = await this.$refs.form.validate();
 
-      if (valid) {
-        if (this.selectedType === "geojson") {
-          this.openFile().then((geojson) => {
-            const project = createProjectFromGeoJSON(
-              this.stylename,
-              this.stylename.toLowerCase(),
-              geojson
-            );
+      if (this.datasource) {
+        const project = new Project(null, this.stylename, null);
+        project.addDataSource(this.datasource);
 
-            this.setProject(project);
-            this.$router.push("/editor");
-          });
-        }
-
-        //     if (this.selectedType === "ogc_vectortile" && this.tilejson) {
-        //       //   let factory = new StyleJSONFactory();
-
-        //       const project = createProjectFromTileJSON();
-
-        //       //   factory.createVectorTileSource(
-        //       //     this.tilejson.tilejson.vector_layers[0].id,
-        //       //     this.tilejson.tilejson.tiles[0]
-        //       //   );
-        //       //   factory.createDefaultLayers("polygon", "buildings");
-        //       //   let stylie = factory.build();
-
-        //       //   let newStyleObject = new StyleJSONConfig(this.stylename, "", stylie);
-
-        //       //   let styleObject = new OGCVectorTiles(
-        //       //     this.tilejson.url,
-        //       //     this.tilejson.tilejson,
-        //       //     this.stylename
-        //       //   );
-
-        //       //   this.loadStyleJson(newStyleObject);
-        //     }
+        console.log("created project", project);
+        this.setProject(project);
+        this.$router.push("/editor");
       }
-    },
 
-    // function below will be absolute
-    loadStyleJson: function (styleObject) {
-      this.addStyleObject(styleObject);
-      this.$router.push("/editor");
+      // if (valid) {
+      //   if (this.selectedType === "geojson") {
+      //     this.openFile().then((geojson) => {
+      //       const project = createProjectFromGeoJSON(
+      //         this.stylename,
+      //         this.stylename.toLowerCase(),
+      //         geojson,
+      //       );
+      //     });
+      //   }
     },
 
     // Move this function to GeoJsoninput
@@ -185,7 +130,7 @@ export default {
             resolve(reader.result);
           } else {
             this.$refs.geoJSONInput.messages.push(
-              "Invalid JSON structure. Could not parse the GeoJSON file"
+              "Invalid JSON structure. Could not parse the GeoJSON file",
             );
 
             reject();
@@ -206,7 +151,7 @@ export default {
 };
 </script>
 <style>
-.form-container {
+.input-container {
   width: 100%;
   max-width: 900px;
 }
@@ -215,7 +160,7 @@ export default {
 }
 
 .form-input-item-label {
-  width: 30%;
+  width: 70%;
   margin-top: 5px;
 }
 

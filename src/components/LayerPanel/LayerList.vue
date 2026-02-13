@@ -3,15 +3,21 @@
     <LayerListControls
       :datasource="datasource"
       @collapse="isCollapsed = isCollapsed ? false : true"
-      class="pl-2 pr-2 pb-1 pt-2"
+      class="pl-2 pr-2 pt-1"
     />
-    <v-divider v-if="!isCollapsed"> </v-divider>
+
     <div v-if="!isCollapsed">
       <div v-for="(layer, i) in datasource.layers" :id="i" class="mb-1 pl-4">
         <div
           class="d-flex flex-row align-center justify-space-between pl-2 pr-2"
         >
-          <span class="text-subtitle-2">{{ layer.name }}</span>
+          <div class="flex-grow-1 pr-2" style="min-width: 0">
+            <span
+              class="text-subtitle-2"
+              style="white-space: normal; word-break: break-word"
+              >{{ layer["source-layer"] }}</span
+            >
+          </div>
           <div class="d-flex flex-row">
             <EditButton
               :layer="layer"
@@ -29,13 +35,22 @@
           class="text-subtitle-2 test pr-4 pb-1 d-flex flex-row justify-space-between"
         >
           <ColorField
-            v-if="key === 'fill-color' || key === 'line-color'"
+            v-if="
+              key === 'fill-color' ||
+              key === 'line-color' ||
+              key === 'circle-stroke-color' ||
+              key === 'circle-color'
+            "
             :key="key"
             :property="{ layer_id: layer.id, property: key, value: value }"
             @color-updated="updateProperties"
           />
           <InputField
-            v-if="key === 'line-width'"
+            v-if="
+              key === 'line-width' ||
+              key === 'circle-stroke-width' ||
+              key === 'circle-radius'
+            "
             :property="{ layer_id: layer.id, property: key, value: value }"
             @update-property="updateProperties"
           />
@@ -87,7 +102,6 @@ export default {
       isCollapsed: false,
     };
   },
-
   methods: {
     deleteLayer: function (layer) {
       this.datasource.deleteLayer(layer.id);

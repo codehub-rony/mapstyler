@@ -58,7 +58,7 @@
         >Add VectorTile layer</v-btn
       >
     </div>
-    <NewTileJSONDialog v-if="isAuthenticated" ref="newdatasource" />
+    <addDataDialog v-if="isAuthenticated" ref="newdatasource" />
   </v-sheet>
 </template>
 
@@ -69,7 +69,7 @@ import LayerList from "@/components/LayerPanel/LayerList.vue";
 import utils from "@/utils/common.js";
 
 //tmp
-import NewTileJSONDialog from "@/components/DataImport/NewTileJSONDialog.vue";
+import addDataDialog from "@/components/DataImport/addDataDialog.vue";
 
 // store
 import { useAuthStore } from "@/store/auth.js";
@@ -83,7 +83,7 @@ export default {
   components: {
     DownloadBtn,
     LayerList,
-    NewTileJSONDialog,
+    addDataDialog,
   },
   props: {
     project: Object,

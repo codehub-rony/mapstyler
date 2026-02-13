@@ -50,14 +50,14 @@ export default {
     ...mapActions(useAuthStore, ["isAuthenticated"]),
     deleteStyleJSONS: function () {
       const missingObjects = this.originalState.filter(
-        (obj1) => !this.styleObjects.some((obj2) => obj2.id === obj1.id)
+        (obj1) => !this.styleObjects.some((obj2) => obj2.id === obj1.id),
       );
 
       if (missingObjects.length > 0) {
         missingObjects.forEach((stylejson) => {
           api.Project.deleteStyleJSON(
             this.currentProject.id,
-            stylejson.id
+            stylejson.id,
           ).then((res) => {
             console.log("succesfully deleted");
           });
@@ -83,14 +83,14 @@ export default {
           api.Project.saveStyleJSON(
             this.currentProject.id,
             styleObject.id,
-            payload
+            payload,
           ).then((res) => {
             this.setOriginalState();
           });
         } else {
           let res = api.Project.createStyleJSON(
             this.currentProject.id,
-            payload
+            payload,
           ).then((res) => {
             styleObject.id = res.id;
             this.setOriginalState();
@@ -104,7 +104,7 @@ export default {
     if (this.isAuthenticated()) {
       if (this.hasUnsavedChanges()) {
         const answer = window.confirm(
-          "You have unsaved changes. Are you sure you want to leave?"
+          "You have unsaved changes. Are you sure you want to leave?",
         );
         if (!answer) return;
       }

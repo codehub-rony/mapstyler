@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <v-form ref="tilejsonform">
       <InputTextField
         v-model="stylename"
         :validationRules="['not_empty', 'only_char']"
-      />
+      >
+        <template #label> Datasource name </template></InputTextField
+      >
       <span
         >TileJSON URL
         <v-tooltip
@@ -81,9 +83,6 @@
       >
         {{ validationError || " " }}
       </div>
-      <v-btn color="primary" flat @click="validateInput"
-        >import vector layers</v-btn
-      >
     </div>
   </div>
 </template>
@@ -94,7 +93,7 @@
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 import GeometrySelector from "./GeometrySelector.vue";
 
-import { createProjectFromTileJSON } from "@/services/ProjectFactory";
+import { VectorTileSource } from "@/utils/datasources/maplibre_style_approach/DataSources";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -133,7 +132,7 @@ export default {
     openUrl: function () {
       window.open(
         "https://github.com/codehub-rony/map-styler/wiki/OGC-API-%E2%80%90-Tiles",
-        "_blank"
+        "_blank",
       );
     },
     validateInput: async function () {
@@ -166,15 +165,20 @@ export default {
 
       if (valid) {
         this.stopTimer();
-        const project = createProjectFromTileJSON(
+
+        const datasource = new VectorTileSource(
           this.stylename,
-          this.tilejson,
-          this.selected,
-          this.tilejson.tiles[0]
+          this.stylename,
+          this.tilejson.tiles[0],
         );
-        console.log(project);
-        this.setProject(project);
-        this.$router.push("/editor");
+
+        this.selected.forEach((layer) => {
+          datasource.createDefaultLayers(layer.geometry_type, layer.id);
+        });
+
+        console.log("creating datasource", datasource);
+
+        this.$emit("datasource-created", datasource);
       }
     },
 
@@ -193,7 +197,8 @@ export default {
         .then((res) => res.json())
         .then((tilejson) => {
           this.tilejson = tilejson;
-          if (!"vector_layers" in tilejson) {
+
+          if ((!"vector_layers") in tilejson) {
             this.TileJSONErrors.push("Tilejson has now vector layers defined");
           }
 
@@ -211,6 +216,8 @@ export default {
       } else {
         this.selected.push(layer);
       }
+
+      this.validateInput();
     },
   },
 };

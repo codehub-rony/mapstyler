@@ -37,8 +37,8 @@
             </div></v-col
           ></v-row
         >
-        <v-row v-if="customData" dense justify-content="center"
-          ><v-col cols="12">
+        <v-row v-if="customData" dense justify="center"
+          ><v-col cols="4" class="d-flex justify-center">
             <LoadData
               @import-data="handleLoadData"
               @go-back="customData = false" /></v-col
@@ -105,7 +105,7 @@ export default {
         const project = createProjectFromGeoJSON(
           "Municipalities",
           "municipalities",
-          demo_data
+          demo_data,
         );
 
         this.setProject(project);

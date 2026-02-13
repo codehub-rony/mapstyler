@@ -4,7 +4,7 @@ class BaseLayer {
       throw new Error("Missing parameter: source_id");
     }
     this._id = this.#generateUniqueId();
-    this._name = `default ${layer_type}`;
+    this._name = `source_layer ${layer_type}`;
     this._source = source_id;
     this._source_layer = source_layer;
     this._type = layer_type;
@@ -36,15 +36,20 @@ class BaseLayer {
   // }
 
   getLayerAsObject() {
-    return {
+    let layer = {
       id: this._id,
       name: this._name,
       type: this._type,
       source: this._source,
-      "source-layer": this._source_layer,
+
       paint: this._paint,
       layout: this._layout,
     };
+
+    if (this._source_layer) {
+      layer["source-layer"] = this._source_layer;
+    }
+    return layer;
   }
 }
 
