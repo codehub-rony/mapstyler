@@ -9,6 +9,7 @@ const geometryToLayerClasses = {
   lines: [LineLayer],
   linestring: [LineLayer],
   point: [CircleLayer],
+  points: [CircleLayer],
 };
 
 class BaseDataSource {
