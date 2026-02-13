@@ -116,7 +116,10 @@ export default {
     ...mapActions(useAppStore, ["deleteDatasource"]),
 
     deleteDataSet: function () {
-      this.deleteDatasource(this.datasource.id);
+      this.emitter.emit("remove-datasource", this.datasource.source_id);
+      this.deleteDatasource(this.datasource.source_id);
+
+      //
     },
     handleCollapse: function () {
       this.isCollapsed = this.isCollapsed ? false : true;

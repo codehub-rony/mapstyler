@@ -35,6 +35,29 @@ export default {
     this.emitter.on("remove-layer", (layer_id) => {
       if (this.map.getLayer(layer_id)) this.map.removeLayer(layer_id);
     });
+
+    this.emitter.on("remove-datasource", (sourceId) => {
+      const style = this.map.getStyle();
+
+      if (!style || !style.layers) return;
+
+      // Find all layers that use this source
+      const layersToRemove = style.layers
+        .filter((layer) => layer.source === sourceId)
+        .map((layer) => layer.id);
+
+      // Remove layers (must be done first!)
+      layersToRemove.forEach((layerId) => {
+        if (this.map.getLayer(layerId)) {
+          this.map.removeLayer(layerId);
+        }
+      });
+
+      // Now remove the source
+      if (this.map.getSource(sourceId)) {
+        this.map.removeSource(sourceId);
+      }
+    });
   },
   unmounted() {
     const map_service = new MapService();

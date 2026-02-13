@@ -48,12 +48,18 @@ export const useAppStore = defineStore("app", {
       this.styleObjects.push(styleObject);
     },
     deleteDatasource(datasource_id_to_delete) {
-      this.project.datasources.splice(
-        this.project.datasources.findIndex(
-          (ds) => ds.source_id === datasource_id_to_delete,
-        ),
-        1,
+      if (!datasource_id_to_delete) return;
+
+      const index = this.project.datasources.findIndex(
+        (ds) => ds.source_id === datasource_id_to_delete,
       );
+
+      if (index === -1) {
+        console.warn("Datasource not found:", datasource_id_to_delete);
+        return;
+      }
+
+      this.project.datasources.splice(index, 1);
     },
 
     saveProject() {
