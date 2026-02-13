@@ -40,6 +40,9 @@ import NotificationBar from "@/components/GenericComponents/NotificationBar.vue"
 // ApiService
 import apiService from "@/services/apiService";
 
+// ProjectService
+import { createEmptyProject } from "@/services/ProjectFactory";
+
 // store
 import { useNotificationStore } from "@/store/notification.js";
 import { useAppStore } from "@/store/app.js";
@@ -55,12 +58,11 @@ export default {
     return {
       projectName: null,
       description: null,
-
       loading: false,
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["setCurrentProject"]),
+    ...mapActions(useAppStore, ["setProject"]),
     ...mapActions(useNotificationStore, ["showNotification"]),
 
     async saveProject() {
@@ -72,7 +74,13 @@ export default {
           description: this.description,
         })
           .then((res) => {
-            this.setCurrentProject(res);
+            const project = createEmptyProject(
+              res.id,
+              res.name,
+              res.description,
+            );
+            this.setProject(project);
+
             this.projectName = this.description = null;
             this.$router.push("/editor");
           })
