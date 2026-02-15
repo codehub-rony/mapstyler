@@ -47,6 +47,31 @@ export const useAppStore = defineStore("app", {
     addStyleObject(styleObject) {
       this.styleObjects.push(styleObject);
     },
+    addDataSource(datasource) {
+      this.project.addDataSource(datasource);
+      MapService.addSource(datasource);
+    },
+    removeLayer(sourceId, layerId) {
+      const datasource = this.project.datasources.find(
+        (ds) => ds.source_id === sourceId,
+      );
+
+      if (!datasource) {
+        console.warn(`Datasource ${sourceId} not found`);
+        return;
+      }
+
+      datasource.deleteLayer(layerId);
+      MapService.removeLayer(layerId);
+    },
+
+    setPaintProperties(layerId, properties) {
+      MapService.setPaintProperties(layerId, properties);
+    },
+
+    setLayoutProperties(layerId, properties) {
+      MapService.setLayoutProperties(layerId, properties);
+    },
     deleteDatasource(datasource_id_to_delete) {
       if (!datasource_id_to_delete) return;
 
@@ -60,14 +85,21 @@ export const useAppStore = defineStore("app", {
       }
 
       this.project.datasources.splice(index, 1);
+      MapService.removeSourceAndLayers(datasource_id_to_delete);
+    },
+
+    unloadProject() {
+      console.log(this.project);
+      MapService.destroyMap();
+      this.project = null;
+      console.log("project closed", this.project);
     },
 
     saveProject() {
-      const map_service = new MapService();
-      let style = map_service.getStyle();
-      console.log("NEED TO IMPLEMENT: POST REQUESTS TO SAVE STYLE");
+      // const map_service = new MapService();
+      // let style = map_service.getStyle();
+      // console.log("NEED TO IMPLEMENT: POST REQUESTS TO SAVE STYLE");
       // this.deleteStyleJSONS();
-
       // this.styleObjects.forEach((styleObject) => {
       //   let payload = {
       //     name: styleObject.name,
@@ -78,7 +110,6 @@ export const useAppStore = defineStore("app", {
       //     tilematrixset_url: styleObject.tilematrixset_url,
       //     stylejson: JSON.parse(styleObject.getStyleJSON()),
       //   };
-
       //   if (styleObject.id) {
       //     api.Project.saveStyleJSON(
       //       this.currentProject.id,

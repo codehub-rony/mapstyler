@@ -43,7 +43,7 @@ import DataSourceSelector from "./DataSourceSelector.vue";
 
 // store
 import { useAppStore } from "@/store/app.js";
-import { mapState } from "pinia";
+import { mapState, mapActions } from "pinia";
 
 export default {
   components: {
@@ -64,10 +64,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(useAppStore, ["addDataSource"]),
     addData() {
       if (this.datasource) {
-        this.project.addDataSource(this.datasource);
-
+        this.addDataSource(this.datasource);
         this.closeDialog();
       }
     },

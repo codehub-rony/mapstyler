@@ -8,6 +8,10 @@
   ></v-btn>
 </template>
 <script>
+// store
+import { useAppStore } from "@/store/app.js";
+import { mapActions } from "pinia";
+
 export default {
   props: {
     layer: Object,
@@ -23,13 +27,12 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useAppStore, ["setLayoutProperties"]),
     handleClick: function () {
       this.isVisible = this.isVisible ? false : true;
-      let update = {
-        layer_id: this.layer.id,
-        properties: { visibility: this.isVisible ? "visible" : "none" },
-      };
-      this.emitter.emit("set-layout-properties", update);
+
+      let properties = { visibility: this.isVisible ? "visible" : "none" };
+      this.setLayoutProperties(this.layer.id, properties);
     },
   },
 };

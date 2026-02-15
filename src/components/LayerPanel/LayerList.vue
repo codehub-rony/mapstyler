@@ -24,7 +24,7 @@
               :datasource="datasource"
               @open-edit-dialog="handleEvent"
             />
-            <DeleteButton :callback="deleteLayer" :layer="layer" />
+            <DeleteButton :callback="delete" :layer="layer" />
             <VisibilityButton :layer="layer" />
           </div>
         </div>
@@ -82,6 +82,10 @@ import EditButton from "./EditButton.vue";
 import BtnCreateLayer from "@/components/Filters/BtnCreateLayer.vue";
 import LayerListControls from "@/components/LayerPanel/LayerListControls.vue";
 
+// store
+import { useAppStore } from "@/store/app.js";
+import { mapActions } from "pinia";
+
 export default {
   emits: ["open-edit-dialog"],
   components: {
@@ -103,15 +107,15 @@ export default {
     };
   },
   methods: {
-    deleteLayer: function (layer) {
-      this.datasource.deleteLayer(layer.id);
-      this.emitter.emit("remove-layer", layer.id);
+    ...mapActions(useAppStore, ["removeLayer", "setPaintProperties"]),
+    delete: function (layer) {
+      this.removeLayer(this.datasource.source_id, layer.id);
     },
     handleEvent: function (layer) {
       this.$refs.filterDialog.openDialog(layer);
     },
     updateProperties(update) {
-      this.emitter.emit("set-paint-property", update);
+      this.setPaintProperties(update.layer_id, update.properties);
     },
   },
 };

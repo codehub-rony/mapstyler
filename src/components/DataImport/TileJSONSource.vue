@@ -176,8 +176,6 @@ export default {
           datasource.createDefaultLayers(layer.geometry_type, layer.id);
         });
 
-        console.log("creating datasource", datasource);
-
         this.$emit("datasource-created", datasource);
       }
     },

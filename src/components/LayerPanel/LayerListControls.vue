@@ -14,7 +14,6 @@
         :icon="isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'"
         color="grey"
         size="x-small"
-        v-bind="props"
         @click="handleCollapse"
       >
       </v-btn>
@@ -107,19 +106,16 @@ export default {
         {
           title: "Delete",
           icon: "mdi-delete-outline",
-          action: this.deleteDataSet,
+          action: this.deleteDataSource,
         },
       ],
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["deleteDatasource"]),
+    ...mapActions(useAppStore, ["deleteDatasource", "setLayoutProperties"]),
 
-    deleteDataSet: function () {
-      this.emitter.emit("remove-datasource", this.datasource.source_id);
+    deleteDataSource: function () {
       this.deleteDatasource(this.datasource.source_id);
-
-      //
     },
     handleCollapse: function () {
       this.isCollapsed = this.isCollapsed ? false : true;
@@ -138,11 +134,9 @@ export default {
         this.datasource.layers.forEach((layer) => {
           layer.layout.visibility =
             layer.layout.visibility === "visible" ? "none" : "visible";
-          let update = {
-            layer_id: layer.id,
-            properties: { visibility: layer.layout.visibility },
-          };
-          this.emitter.emit("set-layout-properties", update);
+          this.setLayoutProperties(layer.id, {
+            visibility: layer.layout.visibility,
+          });
         });
       },
       deep: true,

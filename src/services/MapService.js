@@ -1,32 +1,88 @@
-// src/services/mapService.js
 import maplibregl from "maplibre-gl";
 
-export default class MapService {
+class MapService {
   constructor() {
     if (MapService.instance) {
       return MapService.instance;
     }
     this.map = null;
-    this.optionsCache = null;
-
     MapService.instance = this;
   }
 
-  createMap(container, options = {}) {
-    if (!this.map) {
-      this.optionsCache = {
-        style: "https://tiles.openfreemap.org/styles/positron",
-        center: [5.204, 52.062],
-        zoom: 6,
-        ...options,
-      };
+  createMap(containerId, options = {}) {
+    if (this.map) return this.map;
+    this.map = new maplibregl.Map({
+      container: containerId,
+      style: options.style || "https://tiles.openfreemap.org/styles/positron",
+      center: options.center || [5.204, 52.062],
+      zoom: options.zoom || 6,
+    });
 
-      this.map = new maplibregl.Map({
-        container,
-        ...this.optionsCache,
-      });
+    return this.map;
+  }
+
+  getMap() {
+    if (!this.map) {
+      throw new Error("Map has not been initialized yet");
     }
     return this.map;
+  }
+
+  addSource(datasource) {
+    (console.log("adding source", datasource),
+      !this.map.getSource(datasource.source_id));
+    if (!this.map.getSource(datasource.source_id)) {
+      this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
+    } else {
+      console.log("skipping datasrouce since it already exists");
+      console.warn("Datasource already exists, only adding layers");
+    }
+    datasource.layers.forEach((layer) => {
+      this.map.addLayer(layer);
+    });
+  }
+
+  addLayer(layer) {
+    if (!this.map.getLayer(layer.id)) {
+      this.map.addLayer(layer);
+    }
+  }
+
+  setPaintProperties(layerId, properties) {
+    if (this.map.getLayer(layerId)) {
+      for (const [key, value] of Object.entries(properties)) {
+        this.map.setPaintProperty(layerId, key, value);
+      }
+    }
+  }
+
+  setLayoutProperties(layerId, properties) {
+    if (this.map.getLayer(layerId)) {
+      for (const [key, value] of Object.entries(properties)) {
+        this.map.setLayoutProperty(layerId, key, value);
+      }
+    }
+  }
+
+  removeLayer(layerId) {
+    if (!this.map) return;
+
+    if (this.map.getLayer(layerId)) {
+      this.map.removeLayer(layerId);
+    }
+  }
+
+  removeSourceAndLayers(sourceId) {
+    const style = this.map.getStyle();
+    if (!style?.layers) return;
+
+    style.layers
+      .filter((l) => l.source === sourceId)
+      .forEach((l) => this.map.removeLayer(l.id));
+
+    if (this.map.getSource(sourceId)) {
+      this.map.removeSource(sourceId);
+    }
   }
 
   destroyMap() {
@@ -36,3 +92,5 @@ export default class MapService {
     }
   }
 }
+
+export default new MapService();
