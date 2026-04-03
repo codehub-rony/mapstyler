@@ -85,6 +85,10 @@ class MapService {
     }
   }
 
+  getStyleJSON() {
+    return this.map.getStyle();
+  }
+
   destroyMap() {
     if (this.map) {
       this.map.remove();

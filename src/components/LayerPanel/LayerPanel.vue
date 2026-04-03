@@ -63,13 +63,14 @@
 </template>
 
 <script>
-import DownloadBtn from "@/components/DownloadBtn.vue";
 import LayerList from "@/components/LayerPanel/LayerList.vue";
 
 import utils from "@/utils/common.js";
 
 //tmp
 import addDataDialog from "@/components/DataImport/addDataDialog.vue";
+
+import MapService from "@/services/MapService";
 
 // store
 import { useAuthStore } from "@/store/auth.js";
@@ -81,7 +82,6 @@ import _ from "lodash";
 export default {
   // emits: ["save-project"],
   components: {
-    DownloadBtn,
     LayerList,
     addDataDialog,
   },
@@ -102,13 +102,12 @@ export default {
       this.$refs.newdatasource.openDialog();
     },
     handleClickDownload: function () {
-      this.styleObjects.forEach((styleObject) => {
-        utils.download_stylejson(styleObject);
-      });
+      const style = MapService.getStyleJSON();
+      let stylejson = this.project.cleanStyle(style);
+      utils.download_stylejson(this.project.name, stylejson);
     },
     saveProject: function () {
       this.saveProject();
-      // this.$emit("save-project");
     },
   },
 };

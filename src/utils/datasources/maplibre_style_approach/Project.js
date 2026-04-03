@@ -29,12 +29,29 @@ class Project {
     this._description = description;
   }
 
-  get style_config() {
-    return this._style_config;
-  }
-
   get datasources() {
     return this._datasources;
+  }
+
+  getSourceIds() {
+    return this._datasources.map((ds) => ds.source_id);
+  }
+
+  cleanStyle(style) {
+    const sourceIds = new Set(this.getSourceIds());
+
+    style.layers = style.layers.filter((layer) => {
+      return !layer.source || sourceIds.has(layer.source);
+    });
+
+    style.sources = Object.fromEntries(
+      Object.entries(style.sources).filter(([id]) => sourceIds.has(id)),
+    );
+
+    delete style.glyphs;
+    delete style.sprite;
+
+    return style;
   }
 
   addDataSource(datasource) {
