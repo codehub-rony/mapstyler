@@ -14,7 +14,7 @@ axios.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  },
 );
 
 const requests = {
@@ -53,6 +53,31 @@ const requests = {
   },
 };
 
+const StyleJSON = {
+  create: (project_id, name, description, stylejson) => {
+    let payload = {
+      name: name,
+      description: description,
+      stylejson: stylejson,
+    };
+    return requests.post(
+      `${api_baseUrl}project/${project_id}/stylejsons/`,
+      payload,
+    );
+  },
+  save: (project_id, stylejson_id, name, description, stylejson) => {
+    let payload = {
+      name: name,
+      description: description,
+      stylejson: stylejson,
+    };
+    return requests.put(
+      `${api_baseUrl}project/${project_id}/stylejsons/${stylejson_id}/`,
+      payload,
+    );
+  },
+};
+
 const Project = {
   getAll: () => {
     return requests.get(`${api_baseUrl}project/project/`);
@@ -61,26 +86,22 @@ const Project = {
     return requests.post(`${api_baseUrl}project/project/`, data);
   },
   delete: (project_id) => {
-    return requests.delete(`${api_baseUrl}project/project/${project_id}/`);
+    return requests.delete(`${api_baseUrl}project/${project_id}/`);
   },
   getStylejsons: (project_id) => {
     return requests.get(`${api_baseUrl}project/${project_id}/stylejsons/`);
   },
-  saveStyleJSON: (project_id, stylejson_id, payload) => {
-    return requests.put(
-      `${api_baseUrl}project/${project_id}/stylejsons/${stylejson_id}/`,
-      payload
-    );
-  },
+
+  // obsolete, see styleJSON api object
   createStyleJSON: (project_id, payload) => {
     return requests.post(
       `${api_baseUrl}project/${project_id}/stylejsons/`,
-      payload
+      payload,
     );
   },
   deleteStyleJSON: (project_id, stylejson_id) => {
     return requests.delete(
-      `${api_baseUrl}project/${project_id}/stylejsons/${stylejson_id}/`
+      `${api_baseUrl}project/${project_id}/stylejsons/${stylejson_id}/`,
     );
   },
 };
@@ -96,5 +117,6 @@ const User = {
 
 export default {
   Project,
+  StyleJSON,
   User,
 };

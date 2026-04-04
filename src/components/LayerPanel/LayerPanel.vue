@@ -7,20 +7,20 @@
         variant="text"
         @click="openDialogForNewSource"
         class="mt-2"
-        v-if="isAuthenticated() && project.datasources.length > 0"
+        v-if="isAuthenticated() && project?.datasources?.length > 0"
         >add new</v-btn
       >
     </div>
     <v-scroll-y-transition>
       <div>
         <LayerList
-          v-for="(datasource, key) in project.datasources"
+          v-for="(datasource, key) in project?.datasources"
           :key="key"
           :datasource="datasource"
         />
       </div>
     </v-scroll-y-transition>
-    <div class="d-flex flex-column" v-if="project.datasources.length > 0">
+    <div class="d-flex flex-column" v-if="project?.datasources?.length > 0">
       <v-btn
         block
         color="primary"
@@ -28,7 +28,7 @@
         elevation="0"
         class="mt-2"
         v-if="isAuthenticated()"
-        @click="saveProject"
+        @click="save"
         >save</v-btn
       >
       <v-btn
@@ -96,7 +96,7 @@ export default {
 
   methods: {
     ...mapActions(useAuthStore, ["isAuthenticated"]),
-    ...mapActions(useAppStore, ["saveStyle"]),
+    ...mapActions(useAppStore, ["saveProject"]),
 
     openDialogForNewSource: function () {
       this.$refs.newdatasource.openDialog();
@@ -106,7 +106,7 @@ export default {
       let stylejson = this.project.cleanStyle(style);
       utils.download_stylejson(this.project.name, stylejson);
     },
-    saveProject: function () {
+    save: function () {
       this.saveProject();
     },
   },

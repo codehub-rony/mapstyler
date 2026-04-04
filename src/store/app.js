@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import _ from "lodash";
 import MapService from "@/services/MapService";
+import api from "@/services/apiService";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -89,17 +90,37 @@ export const useAppStore = defineStore("app", {
     },
 
     unloadProject() {
-      console.log(this.project);
       MapService.destroyMap();
       this.project = null;
       console.log("project closed", this.project);
     },
 
-    saveProject() {
-      // const map_service = new MapService();
-      // let style = map_service.getStyle();
-      // console.log("NEED TO IMPLEMENT: POST REQUESTS TO SAVE STYLE");
-      // this.deleteStyleJSONS();
+    async saveProject() {
+      let style = MapService.getStyleJSON();
+      let stylejson = this.project.cleanStyle(style);
+
+      console.log(this.project, "saving project");
+
+      if (this.project.stylejson_id) {
+        console.log("Saving existing stylejosn");
+        api.StyleJSON.save(
+          this.project.id,
+          this.project.stylejson_id,
+          this.project.name,
+          this.project.description,
+          stylejson,
+        );
+      } else {
+        console.log("stylejson deos not exist, creating new");
+        let res = await api.StyleJSON.create(
+          this.project.id,
+          this.project.name,
+          this.project.description,
+          stylejson,
+        );
+
+        this.project.stylejson_id = res.id;
+      }
       // this.styleObjects.forEach((styleObject) => {
       //   let payload = {
       //     name: styleObject.name,

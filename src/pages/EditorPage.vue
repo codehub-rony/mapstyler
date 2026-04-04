@@ -2,7 +2,7 @@
   <v-container>
     <v-row dense>
       <v-col cols="12" xl="2" lg="3" md="3" sm="3">
-        <LayerPanel :project="project" @save-project="saveProject" />
+        <LayerPanel :project="project" />
       </v-col>
 
       <v-col cols="12" xl="10" lg="8" md="9" sm="9">
@@ -42,11 +42,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, [
-      "clearProject",
-      "setOriginalState",
-      "hasUnsavedChanges",
-    ]),
+    ...mapActions(useAppStore, ["clearProject", "hasUnsavedChanges"]),
     ...mapActions(useAuthStore, ["isAuthenticated"]),
     deleteStyleJSONS: function () {
       const missingObjects = this.originalState.filter(
@@ -63,40 +59,6 @@ export default {
           });
         });
       }
-    },
-
-    saveProject: function () {
-      this.deleteStyleJSONS();
-
-      this.styleObjects.forEach((styleObject) => {
-        let payload = {
-          name: styleObject.name,
-          description: styleObject.description,
-          geometry_type: styleObject.geometry_type,
-          source_id: styleObject.source_id,
-          tilejson_url: styleObject.tilejson_url,
-          tilematrixset_url: styleObject.tilematrixset_url,
-          stylejson: JSON.parse(styleObject.getStyleJSON()),
-        };
-
-        if (styleObject.id) {
-          api.Project.saveStyleJSON(
-            this.currentProject.id,
-            styleObject.id,
-            payload,
-          ).then((res) => {
-            this.setOriginalState();
-          });
-        } else {
-          let res = api.Project.createStyleJSON(
-            this.currentProject.id,
-            payload,
-          ).then((res) => {
-            styleObject.id = res.id;
-            this.setOriginalState();
-          });
-        }
-      });
     },
   },
 
