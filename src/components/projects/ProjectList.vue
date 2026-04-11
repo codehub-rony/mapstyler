@@ -39,10 +39,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["setCurrentProject"]),
+    ...mapActions(useAppStore, ["loadProject"]),
     ...mapActions(useNotificationStore, ["showNotification"]),
     openProject: function (project) {
-      this.setCurrentProject(project);
+      this.loadProject(project);
       // refactor to setProject and include create Project from class.. See newprojectpage
       this.$router.push({ name: "editor" });
     },

@@ -54,6 +54,9 @@ const requests = {
 };
 
 const StyleJSON = {
+  load: (project_id) => {
+    return requests.get(`${api_baseUrl}project/${project_id}/stylejsons/`);
+  },
   create: (project_id, name, description, stylejson) => {
     let payload = {
       name: name,
@@ -80,24 +83,13 @@ const StyleJSON = {
 
 const Project = {
   getAll: () => {
-    return requests.get(`${api_baseUrl}project/project/`);
+    return requests.get(`${api_baseUrl}project/`);
   },
   create: (data) => {
-    return requests.post(`${api_baseUrl}project/project/`, data);
+    return requests.post(`${api_baseUrl}project/`, data);
   },
   delete: (project_id) => {
-    return requests.delete(`${api_baseUrl}project/${project_id}/`);
-  },
-  getStylejsons: (project_id) => {
-    return requests.get(`${api_baseUrl}project/${project_id}/stylejsons/`);
-  },
-
-  // obsolete, see styleJSON api object
-  createStyleJSON: (project_id, payload) => {
-    return requests.post(
-      `${api_baseUrl}project/${project_id}/stylejsons/`,
-      payload,
-    );
+    return requests.delete(`${api_baseUrl}/project/${project_id}/`);
   },
   deleteStyleJSON: (project_id, stylejson_id) => {
     return requests.delete(

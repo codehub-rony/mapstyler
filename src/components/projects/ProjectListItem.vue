@@ -28,8 +28,8 @@
   </v-card>
 </template>
 <script>
-import apiService from "@/services/apiService";
-import OGCVectorTiles from "@/utils/datasources/OGCVectorTiles";
+import api from "@/services/apiService";
+
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
@@ -49,15 +49,17 @@ export default {
     openProject: function () {
       this.loading = true;
 
-      apiService.Project.getStylejsons(this.project.id).then((res) => {
+      api.StyleJSON.load(this.project.id).then((res) => {
+        // console.log(res);
         res.forEach((stylejson) => {
-          let styleObject = new OGCVectorTiles(null, null, null, stylejson);
-          this.addStyleObject(styleObject);
+          this.loading = false;
+          //   let styleObject = new OGCVectorTiles(null, null, null, stylejson);
+          //   this.addStyleObject(styleObject);
         });
-        this.setOriginalState();
-        setTimeout(() => {
-          this.$emit("open-project", this.project);
-        }, 800);
+        // this.setOriginalState();
+        // setTimeout(() => {
+        //   this.$emit("open-project", this.project);
+        // }, 800);
       });
     },
     deleteProject() {
