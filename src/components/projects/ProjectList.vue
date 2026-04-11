@@ -39,11 +39,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["loadProject"]),
+    ...mapActions(useAppStore, ["loadStylejson", "loadProject"]),
     ...mapActions(useNotificationStore, ["showNotification"]),
-    openProject: function (project) {
-      this.loadProject(project);
-      // refactor to setProject and include create Project from class.. See newprojectpage
+    openProject: function (data) {
+      this.loadStylejson(data.stylejson);
+      this.loadProject(data.project);
+
       this.$router.push({ name: "editor" });
     },
     deleteProject(project) {

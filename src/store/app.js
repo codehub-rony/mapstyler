@@ -15,10 +15,13 @@ export const useAppStore = defineStore("app", {
   }),
 
   actions: {
+    loadStylejson(stylejson) {
+      this.styleJSON = stylejson;
+    },
     loadProject(project) {
-      console.log("opening project", project);
       this.project = project;
     },
+
     setStyleJSON(stylejson) {
       this.styleJSON = stylejson;
     },
@@ -66,11 +69,11 @@ export const useAppStore = defineStore("app", {
 
       this.styleJSON.addSource(datasource.getSourceAsObject());
       this.styleJSON.addLayers(datasource.layers);
-      // Problem, the MapService is now tightly coupled with the
-      // datasource class definintion. It relies on getSourceAsObject
-      // to work. Needs rafactoring
-      // see MapService.js
-      MapService.addSource(datasource);
+      MapService.addSource(datasource.getSourceAsObject());
+
+      datasource.layers.forEach((layer) => {
+        MapService.addLayer(layer);
+      });
     },
     removeLayer(layerId) {
       this.styleJSON.removeLayer(layerId);

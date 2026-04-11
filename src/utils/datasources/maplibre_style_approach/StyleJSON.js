@@ -1,10 +1,14 @@
 export class StyleJSON {
-  constructor(name = "") {
+  constructor(name = "", styleResource = null) {
     this._id = null;
     this._version = 8;
     this._name = name;
     this._sources = {};
     this._layers = [];
+
+    if (styleResource) {
+      this._init_from_stylejson(styleResource);
+    }
   }
 
   get name() {
@@ -29,6 +33,15 @@ export class StyleJSON {
   set id(id) {
     this._id = id;
   }
+
+  _init_from_stylejson(styleResource) {
+    this._id = styleResource.id;
+    this._version = styleResource.stylejson.version;
+    this._name = styleResource.stylejson.name;
+    this._sources = styleResource.stylejson.sources;
+    this._layers = styleResource.stylejson.layers;
+  }
+
   getLayerById(layerId) {
     return this._layers.find((l) => l.id === layerId);
   }

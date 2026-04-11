@@ -30,6 +30,7 @@
 <script>
 import api from "@/services/apiService";
 
+import { StyleJSON } from "@/utils/datasources/maplibre_style_approach/StyleJSON";
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
@@ -50,16 +51,17 @@ export default {
       this.loading = true;
 
       api.StyleJSON.load(this.project.id).then((res) => {
-        // console.log(res);
-        res.forEach((stylejson) => {
-          this.loading = false;
-          //   let styleObject = new OGCVectorTiles(null, null, null, stylejson);
-          //   this.addStyleObject(styleObject);
-        });
+        console.log(res);
+        this.loading = false;
+
+        let stylejson = new StyleJSON(null, res[0]);
+
         // this.setOriginalState();
-        // setTimeout(() => {
-        //   this.$emit("open-project", this.project);
-        // }, 800);
+
+        let data = { stylejson: stylejson, project: this.project };
+        setTimeout(() => {
+          this.$emit("open-project", data);
+        }, 800);
       });
     },
     deleteProject() {
