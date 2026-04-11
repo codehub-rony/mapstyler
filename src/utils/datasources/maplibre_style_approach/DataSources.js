@@ -84,6 +84,8 @@ export class VectorTileSource extends BaseDataSource {
   }
 
   getSourceAsObject() {
-    return { type: this._type, tiles: this._tiles };
+    let source = {};
+    source[this._source_id] = { type: this._type, tiles: this._tiles };
+    return source;
   }
 }

@@ -29,19 +29,12 @@ class MapService {
   }
 
   addSource(datasource) {
-    // Problem, the MapService is now tightly coupled with the
-    // datasource class definintion. It relies on getSourceAsObject
-    // to work. Needs rafactoring
-    // see store app.js
-    if (!this.map.getSource(datasource.source_id)) {
-      const source = datasource.getSourceAsObject();
-      this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
-    } else {
-      console.log("skipping datasrouce since it already exists");
-      console.warn("Datasource already exists, only adding layers");
-    }
-    datasource.layers.forEach((layer) => {
-      this.map.addLayer(layer);
+    Object.entries(datasource).forEach(([sourceId, sourceDef]) => {
+      if (this.map.getSource(sourceId)) {
+        return;
+      }
+
+      this.map.addSource(sourceId, sourceDef);
     });
   }
 
