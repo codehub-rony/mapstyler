@@ -34,20 +34,21 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["clearProject", "hasUnsavedChanges"]),
+    ...mapActions(useAppStore, ["unloadProject"]),
     ...mapActions(useAuthStore, ["isAuthenticated"]),
   },
 
   beforeRouteLeave: function (to, from, next) {
     if (this.isAuthenticated()) {
-      if (this.hasUnsavedChanges()) {
-        const answer = window.confirm(
-          "You have unsaved changes. Are you sure you want to leave?",
-        );
-        if (!answer) return;
-      }
+      // if (this.hasUnsavedChanges()) {
+      //   const answer = window.confirm(
+      //     "You have unsaved changes. Are you sure you want to leave?",
+      //   );
+      //   if (!answer) return;
+      // }
     }
-    // this.clearProject();
+
+    this.unloadProject();
 
     this.$nextTick(() => {
       next();

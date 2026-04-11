@@ -52,10 +52,6 @@ export const useAppStore = defineStore("app", {
       let stylejson = new StyleJSON();
       this.setStyleJSON(stylejson);
     },
-    async clearProject() {
-      this.project = null;
-      this.styleJSON = null;
-    },
 
     addDataSource(datasource) {
       if (!this.styleJSON) {
@@ -104,7 +100,7 @@ export const useAppStore = defineStore("app", {
     unloadProject() {
       MapService.destroyMap();
       this.project = null;
-      console.log("project closed", this.project);
+      this.styleJSON = null;
     },
 
     async saveProject() {

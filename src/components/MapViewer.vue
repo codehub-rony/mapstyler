@@ -55,9 +55,6 @@ export default {
         window.innerHeight < 950 ? window.innerHeight * 0.8 : "85vh";
     },
   },
-  unmounted() {
-    this.unloadProject();
-  },
 };
 </script>
 <style>
