@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <v-form ref="tilejsonform">
       <InputTextField
-        v-model="stylename"
+        v-model="datasourceId"
         :validationRules="['not_empty', 'only_char']"
       >
         <template #label> Datasource name </template></InputTextField
@@ -92,12 +92,14 @@
 // TO DO: refactor timer
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
 import GeometrySelector from "./GeometrySelector.vue";
+import { StyleJSON } from "@/utils/datasources/maplibre_style_approach/StyleJSON";
 
 import { VectorTileSource } from "@/utils/datasources/maplibre_style_approach/DataSources";
 
 // store
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
+
 export default {
   components: { InputTextField, GeometrySelector },
   data() {
@@ -106,7 +108,7 @@ export default {
       validationError: " ",
       TileJSONErrors: [],
       selected: [],
-      stylename: null,
+      datasourceId: null,
       tilejsonRules: [(v) => !!v || "A URL to a vector tilejson is required"],
       validGoemetries: [
         "polygons",
@@ -121,7 +123,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["addStyleObject", "setProject"]),
+    ...mapActions(useAppStore, ["setProject"]),
     setGeoemtryType: function (update) {
       this.vector_layers.forEach((vector_layer) => {
         if (vector_layer.id === update.layer_id) {
@@ -167,13 +169,17 @@ export default {
         this.stopTimer();
 
         const datasource = new VectorTileSource(
-          this.stylename,
-          this.stylename,
+          this.datasourceId,
+          this.datasourceId,
           this.tilejson.tiles[0],
         );
 
         this.selected.forEach((layer) => {
-          datasource.createDefaultLayers(layer.geometry_type, layer.id);
+          datasource.createDefaultLayers(
+            layer.geometry_type,
+            layer.id,
+            this.datasourceId,
+          );
         });
 
         this.$emit("datasource-created", datasource);

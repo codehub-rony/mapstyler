@@ -40,8 +40,6 @@ import NotificationBar from "@/components/GenericComponents/NotificationBar.vue"
 // ApiService
 import apiService from "@/services/apiService";
 
-import Project from "@/utils/datasources/maplibre_style_approach/Project";
-
 // store
 import { useNotificationStore } from "@/store/notification.js";
 import { useAppStore } from "@/store/app.js";
@@ -61,8 +59,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useAppStore, ["setProject"]),
     ...mapActions(useNotificationStore, ["showNotification"]),
+    ...mapActions(useAppStore, ["createProject"]),
 
     async saveProject() {
       const { valid } = await this.$refs.projectform.validate();
@@ -74,15 +72,13 @@ export default {
           description: this.description,
         })
           .then((res) => {
-            const project = new Project(res.id, res.name, res.description);
-
-            this.setProject(project);
+            this.createProject(res);
 
             this.projectName = this.description = null;
             this.$router.push("/editor");
           })
           .catch((err) => {
-            this.showNotification("Failed to create a project", "error");
+            this.showNotification("Failed to create a project", err);
             this.loading = false;
           });
       }

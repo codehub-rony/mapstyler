@@ -85,14 +85,14 @@ export default {
       this.color.a = this.color.a ? Math.round(this.color.a * 100) / 100 : 1;
 
       let updated_color = { layer_id: this.property.layer_id, properties: {} };
-      updated_color.properties[
-        this.property.property
-      ] = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+      updated_color.properties[this.property.property] =
+        `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
       updated_color.properties[
         this.property.property.includes("fill")
           ? "fill-opacity"
           : "line-opacity"
       ] = this.color.a;
+
       this.$emit("color-updated", updated_color);
     },
     closeColorPicker: function () {

@@ -19,7 +19,7 @@
         <component
           :is="selectedType"
           v-if="selectedType"
-          @datasource-created="datasource = $event"
+          @datasource-created="addDataToStyleJSON"
         />
       </div>
 
@@ -49,8 +49,7 @@
 import TileJSONSource from "@/components/DataImport/TileJSONSource.vue";
 import GeoJSONSource from "@/components/DataImport/GeoJSONSource.vue";
 import InputTextField from "@/components/GenericComponents/InputTextField.vue";
-
-import Project from "@/utils/datasources/maplibre_style_approach/Project";
+import { StyleJSON } from "@/utils/datasources/maplibre_style_approach/StyleJSON";
 
 // store
 import { useAppStore } from "@/store/app.js";
@@ -68,7 +67,7 @@ export default {
       fileInput: null,
       stylename: null,
       selectedType: null,
-      datasource: null,
+      stylejson: null,
       dataSources: [
         { label: "GeoJSON", id: "geojson" },
         { label: "TileJSON", id: "tilejson" },
@@ -79,19 +78,23 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ["setProject"]),
+    ...mapActions(useAppStore, ["setStyleJSON"]),
     async validate() {
       this.loading = true;
 
-      if (this.datasource) {
-        const project = new Project(null, this.stylename, null);
-        project.addDataSource(this.datasource);
-
-        this.setProject(project);
+      if (this.stylejson) {
+        this.setStyleJSON(this.stylejson);
         this.$router.push("/editor");
       }
     },
+    addDataToStyleJSON(datasource) {
+      if (!this.stylejson) {
+        this.stylejson = new StyleJSON(this.stylename);
+      }
 
+      this.stylejson.addSource(datasource.getSourceAsObject());
+      this.stylejson.addLayers(datasource.layers);
+    },
     handleBackClick: function () {
       if (this.selectedType) {
         this.selectedType = null;

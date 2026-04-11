@@ -4,7 +4,7 @@ class BaseLayer {
       throw new Error("Missing parameter: source_id");
     }
     this._id = this.#generateUniqueId();
-    this._name = `source_layer ${layer_type}`;
+    this._name = `${source_layer} ${layer_type}`;
     this._source = source_id;
     this._source_layer = source_layer;
     this._type = layer_type;

@@ -18,7 +18,6 @@ export default {
   components: { LayerEditDialog },
   props: {
     layer: Object,
-    datasource: Object,
   },
   methods: {
     handleClick: async function () {

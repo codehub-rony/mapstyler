@@ -3,22 +3,26 @@ import { defineStore } from "pinia";
 import _ from "lodash";
 import MapService from "@/services/MapService";
 import api from "@/services/apiService";
+import { StyleJSON } from "@/utils/datasources/maplibre_style_approach/StyleJSON";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
     project: null,
     styleObjects: [],
+    styleJSON: null,
     currentProject: null,
     originalState: [],
   }),
 
   actions: {
-    setCurrentProject(project) {
-      this.currentProject = project;
-    },
-    setProject(project) {
+    loadProject(project) {
+      console.log("opening project", project);
       this.project = project;
     },
+    setStyleJSON(stylejson) {
+      this.styleJSON = stylejson;
+    },
+
     setOriginalState() {
       this.originalState = [];
       if (this.styleObjects) {
@@ -41,6 +45,12 @@ export const useAppStore = defineStore("app", {
 
       return unsaved_edits || new_datasources;
     },
+    createProject(project) {
+      this.project = project;
+
+      let stylejson = new StyleJSON();
+      this.setStyleJSON(stylejson);
+    },
     async clearProject() {
       this.currentProject = null;
       this.styleObjects = [];
@@ -49,28 +59,31 @@ export const useAppStore = defineStore("app", {
       this.styleObjects.push(styleObject);
     },
     addDataSource(datasource) {
-      this.project.addDataSource(datasource);
-      MapService.addSource(datasource);
-    },
-    removeLayer(sourceId, layerId) {
-      const datasource = this.project.datasources.find(
-        (ds) => ds.source_id === sourceId,
-      );
-
-      if (!datasource) {
-        console.warn(`Datasource ${sourceId} not found`);
+      if (!this.styleJSON) {
+        console.error("styleJSON is not initialized");
         return;
       }
 
-      datasource.deleteLayer(layerId);
+      this.styleJSON.addSource(datasource.getSourceAsObject());
+      this.styleJSON.addLayers(datasource.layers);
+      // Problem, the MapService is now tightly coupled with the
+      // datasource class definintion. It relies on getSourceAsObject
+      // to work. Needs rafactoring
+      // see MapService.js
+      MapService.addSource(datasource);
+    },
+    removeLayer(layerId) {
+      this.styleJSON.removeLayer(layerId);
       MapService.removeLayer(layerId);
     },
 
     setPaintProperties(layerId, properties) {
+      this.styleJSON.updateLayerProperties(layerId, properties, "paint");
       MapService.setPaintProperties(layerId, properties);
     },
 
     setLayoutProperties(layerId, properties) {
+      this.styleJSON.updateLayerProperties(layerId, properties, "layout");
       MapService.setLayoutProperties(layerId, properties);
     },
     deleteDatasource(datasource_id_to_delete) {
@@ -96,16 +109,15 @@ export const useAppStore = defineStore("app", {
     },
 
     async saveProject() {
-      let style = MapService.getStyleJSON();
-      let stylejson = this.project.cleanStyle(style);
+      let stylejson = this.styleJSON.export();
 
-      console.log(this.project, "saving project");
+      console.log(this.project, stylejson, "saving project");
 
-      if (this.project.stylejson_id) {
+      if (this.styleJSON.id) {
         console.log("Saving existing stylejosn");
         api.StyleJSON.save(
           this.project.id,
-          this.project.stylejson_id,
+          this.styleJSON.id,
           this.project.name,
           this.project.description,
           stylejson,
@@ -119,36 +131,8 @@ export const useAppStore = defineStore("app", {
           stylejson,
         );
 
-        this.project.stylejson_id = res.id;
+        this.styleJSON.id = res.id;
       }
-      // this.styleObjects.forEach((styleObject) => {
-      //   let payload = {
-      //     name: styleObject.name,
-      //     description: styleObject.description,
-      //     geometry_type: styleObject.geometry_type,
-      //     source_id: styleObject.source_id,
-      //     tilejson_url: styleObject.tilejson_url,
-      //     tilematrixset_url: styleObject.tilematrixset_url,
-      //     stylejson: JSON.parse(styleObject.getStyleJSON()),
-      //   };
-      //   if (styleObject.id) {
-      //     api.Project.saveStyleJSON(
-      //       this.currentProject.id,
-      //       styleObject.id,
-      //       payload
-      //     ).then((res) => {
-      //       this.setOriginalState();
-      //     });
-      //   } else {
-      //     let res = api.Project.createStyleJSON(
-      //       this.currentProject.id,
-      //       payload
-      //     ).then((res) => {
-      //       styleObject.id = res.id;
-      //       this.setOriginalState();
-      //     });
-      //   }
-      // });
     },
   },
 });

@@ -27,7 +27,7 @@
         </v-row>
         <v-row justify="center">
           <v-col cols="auto" class="text-center">
-            <ButtonGroup @confirm="addData" @decline="closeDialog" />
+            <ButtonGroup @confirm="addDataToStyleJSON" @decline="closeDialog" />
           </v-col>
         </v-row>
       </v-container>
@@ -43,7 +43,7 @@ import DataSourceSelector from "./DataSourceSelector.vue";
 
 // store
 import { useAppStore } from "@/store/app.js";
-import { mapState, mapActions } from "pinia";
+import { mapActions } from "pinia";
 
 export default {
   components: {
@@ -52,9 +52,10 @@ export default {
     InputTextField,
     DataSourceSelector,
   },
-  computed: {
-    ...mapState(useAppStore, ["project"]),
+  props: {
+    stylejson: Object,
   },
+
   data() {
     return {
       selectedType: null,
@@ -65,11 +66,15 @@ export default {
 
   methods: {
     ...mapActions(useAppStore, ["addDataSource"]),
-    addData() {
-      if (this.datasource) {
-        this.addDataSource(this.datasource);
-        this.closeDialog();
+    addDataToStyleJSON() {
+      if (!this.stylejson) {
+        console.error("No stylejson defined");
+        return;
       }
+
+      this.addDataSource(this.datasource);
+
+      this.closeDialog();
     },
 
     openDialog() {

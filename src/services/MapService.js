@@ -29,9 +29,12 @@ class MapService {
   }
 
   addSource(datasource) {
-    (console.log("adding source", datasource),
-      !this.map.getSource(datasource.source_id));
+    // Problem, the MapService is now tightly coupled with the
+    // datasource class definintion. It relies on getSourceAsObject
+    // to work. Needs rafactoring
+    // see store app.js
     if (!this.map.getSource(datasource.source_id)) {
+      const source = datasource.getSourceAsObject();
       this.map.addSource(datasource.source_id, datasource.getSourceAsObject());
     } else {
       console.log("skipping datasrouce since it already exists");

@@ -1,7 +1,7 @@
 class Project {
-  constructor(id = null, stylename, description) {
+  constructor(id = null, name, description) {
     this._id = id;
-    this._name = stylename;
+    this._name = name;
     this._description = description ? description : "";
     this._datasources = [];
     this._stylejson_id = null;

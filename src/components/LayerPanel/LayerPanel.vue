@@ -7,20 +7,20 @@
         variant="text"
         @click="openDialogForNewSource"
         class="mt-2"
-        v-if="isAuthenticated() && project?.datasources?.length > 0"
+        v-if="
+          isAuthenticated() &&
+          styleJSON?.sources &&
+          Object.keys(styleJSON.sources).length > 0
+        "
         >add new</v-btn
       >
     </div>
     <v-scroll-y-transition>
       <div>
-        <LayerList
-          v-for="(datasource, key) in project?.datasources"
-          :key="key"
-          :datasource="datasource"
-        />
+        <LayerList :layers="styleJSON?.layers" />
       </div>
     </v-scroll-y-transition>
-    <div class="d-flex flex-column" v-if="project?.datasources?.length > 0">
+    <div class="d-flex flex-column" v-if="styleJSON?.layers?.length > 0">
       <v-btn
         block
         color="primary"
@@ -58,35 +58,36 @@
         >Add VectorTile layer</v-btn
       >
     </div>
-    <addDataDialog v-if="isAuthenticated" ref="newdatasource" />
+    <addDataDialog
+      v-if="isAuthenticated"
+      :stylejson="styleJSON"
+      ref="newdatasource"
+    />
   </v-sheet>
 </template>
 
 <script>
 import LayerList from "@/components/LayerPanel/LayerList.vue";
 
-import utils from "@/utils/common.js";
-
 //tmp
 import addDataDialog from "@/components/DataImport/addDataDialog.vue";
-
-import MapService from "@/services/MapService";
 
 // store
 import { useAuthStore } from "@/store/auth.js";
 import { useAppStore } from "@/store/app.js";
 import { mapActions } from "pinia";
 
+import utils from "@/utils/common.js";
+
 import _ from "lodash";
 
 export default {
-  // emits: ["save-project"],
   components: {
     LayerList,
     addDataDialog,
   },
   props: {
-    project: Object,
+    styleJSON: Object,
   },
   data() {
     return {
@@ -102,9 +103,7 @@ export default {
       this.$refs.newdatasource.openDialog();
     },
     handleClickDownload: function () {
-      const style = MapService.getStyleJSON();
-      let stylejson = this.project.cleanStyle(style);
-      utils.download_stylejson(this.project.name, stylejson);
+      utils.download_stylejson(this.styleJSON.export());
     },
     save: function () {
       this.saveProject();

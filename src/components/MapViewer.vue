@@ -13,7 +13,7 @@ import MapService from "@/services/MapService";
 
 export default {
   computed: {
-    ...mapState(useAppStore, ["project"]),
+    ...mapState(useAppStore, ["styleJSON"]),
   },
   data() {
     return {
@@ -38,15 +38,15 @@ export default {
       });
     },
     loadStyle() {
-      if (this.project.datasources.length > 0) {
-        this.project.datasources.forEach((datasource) => {
-          this.map.addSource(
-            datasource.source_id,
-            datasource.getSourceAsObject(),
-          );
-          datasource.layers.forEach((layer) => {
-            this.map.addLayer(layer);
-          });
+      const sources = this.styleJSON.sources;
+      const layers = this.styleJSON.layers;
+      if (this.styleJSON && Object.keys(sources).length > 0) {
+        for (const [key, value] of Object.entries(sources)) {
+          this.map.addSource(key, value);
+        }
+
+        layers.forEach((layer) => {
+          this.map.addLayer(layer);
         });
       }
     },
