@@ -75,7 +75,6 @@ import logo from "@/assets/logo.svg";
 
 // store
 import { useAuthStore } from "@/store/auth.js";
-import { useAppStore } from "@/store/app.js";
 import { mapState, mapActions } from "pinia";
 
 export default {
@@ -90,7 +89,6 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ["user_email"]),
-    ...mapState(useAppStore, ["currentProject"]),
   },
   methods: {
     ...mapActions(useAuthStore, ["logout", "isAuthenticated"]),

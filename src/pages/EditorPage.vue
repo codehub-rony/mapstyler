@@ -2,7 +2,7 @@
   <v-container>
     <v-row dense>
       <v-col cols="12" xl="2" lg="3" md="3" sm="3">
-        <LayerPanel :project="project" />
+        <LayerPanel :styleJSON="styleJSON" />
       </v-col>
 
       <v-col cols="12" xl="10" lg="8" md="9" sm="9">
@@ -24,42 +24,18 @@ import { mapActions, mapState } from "pinia";
 
 import _ from "lodash";
 
-//API
-import api from "@/services/apiService";
-
 export default {
   components: {
     LayerPanel,
     MapViewer,
   },
   computed: {
-    ...mapState(useAppStore, [
-      "styleObjects",
-      "currentProject",
-      "originalState",
-      "project",
-    ]),
+    ...mapState(useAppStore, ["styleJSON"]),
   },
 
   methods: {
     ...mapActions(useAppStore, ["clearProject", "hasUnsavedChanges"]),
     ...mapActions(useAuthStore, ["isAuthenticated"]),
-    deleteStyleJSONS: function () {
-      const missingObjects = this.originalState.filter(
-        (obj1) => !this.styleObjects.some((obj2) => obj2.id === obj1.id),
-      );
-
-      if (missingObjects.length > 0) {
-        missingObjects.forEach((stylejson) => {
-          api.Project.deleteStyleJSON(
-            this.currentProject.id,
-            stylejson.id,
-          ).then((res) => {
-            console.log("succesfully deleted");
-          });
-        });
-      }
-    },
   },
 
   beforeRouteLeave: function (to, from, next) {
@@ -71,7 +47,7 @@ export default {
         if (!answer) return;
       }
     }
-    this.clearProject();
+    // this.clearProject();
 
     this.$nextTick(() => {
       next();

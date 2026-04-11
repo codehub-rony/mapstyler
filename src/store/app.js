@@ -8,9 +8,7 @@ import { StyleJSON } from "@/utils/datasources/maplibre_style_approach/StyleJSON
 export const useAppStore = defineStore("app", {
   state: () => ({
     project: null,
-    styleObjects: [],
     styleJSON: null,
-    currentProject: null,
     originalState: [],
   }),
 
@@ -26,28 +24,28 @@ export const useAppStore = defineStore("app", {
       this.styleJSON = stylejson;
     },
 
-    setOriginalState() {
-      this.originalState = [];
-      if (this.styleObjects) {
-        this.styleObjects.forEach((styleobject) => {
-          this.originalState.push(_.cloneDeep(styleobject));
-        });
-      }
-    },
-    hasUnsavedChanges() {
-      let unsaved_edits = this.originalState.some((original_styleObject) => {
-        let styleObject = this.styleObjects.find(
-          (x) => x.id === original_styleObject.id,
-        );
+    // setOriginalState() {
+    //   this.originalState = [];
+    //   if (this.styleObjects) {
+    //     this.styleObjects.forEach((styleobject) => {
+    //       this.originalState.push(_.cloneDeep(styleobject));
+    //     });
+    //   }
+    // },
+    // hasUnsavedChanges() {
+    //   let unsaved_edits = this.originalState.some((original_styleObject) => {
+    //     let styleObject = this.styleObjects.find(
+    //       (x) => x.id === original_styleObject.id,
+    //     );
 
-        return !_.isEqual(original_styleObject, styleObject);
-      });
+    //     return !_.isEqual(original_styleObject, styleObject);
+    //   });
 
-      let new_datasources =
-        this.styleObjects.length - this.originalState.length > 0;
+    //   let new_datasources =
+    //     this.styleObjects.length - this.originalState.length > 0;
 
-      return unsaved_edits || new_datasources;
-    },
+    //   return unsaved_edits || new_datasources;
+    // },
     createProject(project) {
       this.project = project;
 
@@ -55,12 +53,10 @@ export const useAppStore = defineStore("app", {
       this.setStyleJSON(stylejson);
     },
     async clearProject() {
-      this.currentProject = null;
-      this.styleObjects = [];
+      this.project = null;
+      this.styleJSON = null;
     },
-    addStyleObject(styleObject) {
-      this.styleObjects.push(styleObject);
-    },
+
     addDataSource(datasource) {
       if (!this.styleJSON) {
         console.error("styleJSON is not initialized");
