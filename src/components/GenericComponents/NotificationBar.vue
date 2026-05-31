@@ -55,15 +55,17 @@ export default {
 <style>
 .notification-bar-container {
   padding: 10px;
-  position: absolute;
+  position: fixed;
   right: 0px;
   top: 80px;
-
+  max-width: 400px;
   z-index: 9999;
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease, right 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    right 0.2s ease;
 }
 .fade-enter-from,
 .fade-leave-to {

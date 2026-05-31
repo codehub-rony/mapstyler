@@ -31,6 +31,7 @@ class MapService {
   addSource(datasource) {
     Object.entries(datasource).forEach(([sourceId, sourceDef]) => {
       if (this.map.getSource(sourceId)) {
+        console.warn(`source with id ${sourceId} already exists; skipping`);
         return;
       }
 

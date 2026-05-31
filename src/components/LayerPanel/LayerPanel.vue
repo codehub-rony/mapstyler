@@ -68,6 +68,7 @@
 
 <script>
 import LayerList from "@/components/LayerPanel/LayerList.vue";
+import { useNotificationStore } from "@/store/notification.js";
 
 //tmp
 import addDataDialog from "@/components/DataImport/addDataDialog.vue";
@@ -98,6 +99,7 @@ export default {
   methods: {
     ...mapActions(useAuthStore, ["isAuthenticated"]),
     ...mapActions(useAppStore, ["saveProject"]),
+    ...mapActions(useNotificationStore, ["showNotification"]),
 
     openDialogForNewSource: function () {
       this.$refs.newdatasource.openDialog();
@@ -105,8 +107,11 @@ export default {
     handleClickDownload: function () {
       utils.download_stylejson(this.styleJSON.export());
     },
-    save: function () {
-      this.saveProject();
+    save: async function () {
+      console.log("wuhii");
+      let res = await this.saveProject();
+      console.log(res);
+      this.showNotification(res.msg, res.success ? "success" : "error");
     },
   },
 };

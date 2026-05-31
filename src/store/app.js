@@ -104,30 +104,62 @@ export const useAppStore = defineStore("app", {
     },
 
     async saveProject() {
-      let stylejson = this.styleJSON.export();
+      try {
+        const stylejson = this.styleJSON.export();
 
-      console.log(this.project, stylejson, "saving project");
+        if (this.styleJSON.id) {
+          const res = await api.StyleJSON.save(
+            this.project.id,
+            this.styleJSON.id,
+            this.project.name,
+            this.project.description,
+            stylejson,
+          );
 
-      if (this.styleJSON.id) {
-        console.log("Saving existing stylejosn");
-        api.StyleJSON.save(
-          this.project.id,
-          this.styleJSON.id,
-          this.project.name,
-          this.project.description,
-          stylejson,
-        );
-      } else {
-        console.log("stylejson deos not exist, creating new");
-        let res = await api.StyleJSON.create(
-          this.project.id,
-          this.project.name,
-          this.project.description,
-          stylejson,
-        );
+          return { success: true, msg: "Project saved" };
+        } else {
+          const res = await api.StyleJSON.create(
+            this.project.id,
+            this.project.name,
+            this.project.description,
+            stylejson,
+          );
 
-        this.styleJSON.id = res.id;
+          this.styleJSON.id = res.id;
+
+          return { success: true, msg: "Project saved" };
+        }
+      } catch (error) {
+        console.error("Failed to save project", error);
+
+        return {
+          success: false,
+          msg: "failed to save project",
+        };
       }
+
+      // if (this.styleJSON.id) {
+      //   console.log("Saving existing stylejosn");
+      //   return api.StyleJSON.save(
+      //     this.project.id,
+      //     this.styleJSON.id,
+      //     this.project.name,
+      //     this.project.description,
+      //     stylejson,
+      //   );
+      // } else {
+      //   console.log("stylejson deos not exist, creating new");
+      //   let res = await api.StyleJSON.create(
+      //     this.project.id,
+      //     this.project.name,
+      //     this.project.description,
+      //     stylejson,
+      //   );
+
+      //   this.styleJSON.id = res.id;
+
+      //   return { succes: true}
+      // }
     },
   },
 });

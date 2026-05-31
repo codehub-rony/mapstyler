@@ -4,6 +4,8 @@
 
     <!-- <v-main class="bg-grey-lighten-3"> -->
     <v-main>
+      <NotificationBar />
+
       <router-view></router-view>
       <!-- <AppFooter /> -->
     </v-main>
@@ -13,6 +15,7 @@
 <script>
 import AppBar from "@/components/AppBar/AppBar.vue";
 import AppFooter from "@/components/AppFooter.vue";
+import NotificationBar from "./components/GenericComponents/NotificationBar.vue";
 
 // store
 import { useAuthStore } from "@/store/auth.js";
